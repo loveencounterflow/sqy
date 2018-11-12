@@ -18,55 +18,12 @@ echo                      = CND.echo.bind CND
 #...........................................................................................................
 jr                        = JSON.stringify
 assign                    = Object.assign
-# new_xregex                = require 'xregexp'
-MOO                       = require 'moo'
+LXR                       = require '../sqlish-lexer'
+join                      = ( x, joiner = '' ) -> x.join joiner
 
-words_of  = ( text ) -> text.split /\s+/
-join      = ( x, joiner = ' ' ) -> x.join joiner
 
-keywords = MOO.keywords {
-  create:     'create'
-  set:        'set'
-  layout:     'layout'
-  field:      'field'
-  fields:     'fields'
-  border:     'border'
-  grid:       'grid'
-  select:     'select'
-  at:         'at'
-  to:         'to'
-  edge:       words_of 'top left bottom right center'
-  boolean:    words_of 'true false'
 
-  # halign:     /horizontal\s+alignment/
-  }
-
-syntax =
-  # comment:    /\/\/.*?$/
-  # number:     /0|[1-9][0-9]*/
-  dq_string:  /"(?:\\["\\]|[^\n"\\])*"/
-  sq_string:  /'(?:\\['\\]|[^\n'\\])*'/
-  halign:     /horizontal\s+alignment|halign/
-  valign:     /vertical\s+alignment|valign/
-  # lparen:     '('
-  # rparen:     ')'
-  id:         /// \# [-a-z]+ ///
-  clasz:      /// \. [-a-z]+ ///
-  name:       { match: /[a-z]+/, type: keywords }
-  upto:       /// \.\. ///
-  # cellkey:    /// \*{1,2} | (?: (?: \* | [A-Z]+ ) (?: \* | [0-9]+ ) ) ///
-  rowletters: /[A-Z]+/
-  coldigits:  /[0-9]+/
-  dubstar:    '**'
-  lonestar:   '*'
-  comma:      ','
-  colon:      ':'
-  semicolon:  ';'
-  lws:        /[ \t]+/
-  nl:         { match: /\n/, lineBreaks: true }
-
-lexer = MOO.compile syntax
-
+#-----------------------------------------------------------------------------------------------------------
 colors =
   command:    CND.gold
   name:       CND.red
@@ -102,10 +59,10 @@ sources = [
 
 for source in sources
   info rpr source
-  lexer.reset source
+  LXR.lexer.reset source
   P = []
   try
-    while ( token = lexer.next() )?
+    while ( token = LXR.lexer.next() )?
       unless token.type is 'lws'
         color   = colors[ token.type ] ? null
         color  ?= CND.gold if token.type is token.text
@@ -117,7 +74,7 @@ for source in sources
     break
   echo join P, '\n'
 
-# debug ( key for key of lexer )
+# debug ( key for key of LXR.lexer )
 help 'done'
 
 
