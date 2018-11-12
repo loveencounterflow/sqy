@@ -50,13 +50,10 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "basic" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["create layout #mylayout;"]
-    ["set grid to G5;"]
     ["set debug to false;"]
-    ["set debug to true;"]
-    ["create field at A1;"]
-    ["create field at A1..B2;"]
-    ["create field #myfield at A1..B2;"]
+    # ["create field at A1;"]
+    # ["set grid to G5;"]
+    # ["set debug to true;"]
     # ["select fields #myfield:                       set top border to 'thin, blue';"]
     # ["select fields #myfield, #thatone, .h, A1..B2: set top border to 'thin, blue';"]
     # ["select fields .caption:                       set horizontal alignment to left;"]
@@ -67,6 +64,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     try
       parser.feed probe
     catch error
+      throw error
       T.fail error.message
       continue
     result = parser.results
