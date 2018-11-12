@@ -139,14 +139,15 @@ $set_debug = ( d, loc ) ->
 #-----------------------------------------------------------------------------------------------------------
 phrase                -> create                                                 {% $first                %}
 phrase                -> set                                                    {% $first                %}
+phrase                -> select                                                 {% $first                %}
 #...........................................................................................................
 create                -> create_field                                           {% $first                %}
 create                -> create_layout                                          {% $first                %}
 #...........................................................................................................
 create_field          -> create_named_field                                     {% $first                %}
 create_field          -> create_unnamed_field                                   {% $first                %}
-create_named_field    -> "create" __ "field" __ %id __ "at" __ selector _ stop  {% $create_named_field   %}
-create_unnamed_field  -> "create" __ "field" __        "at" __ selector _ stop  {% $create_unnamed_field %}
+create_named_field    -> "create" __ "field" __ %id __ "at" __ cell_selector _ stop  {% $create_named_field   %}
+create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector _ stop  {% $create_unnamed_field %}
 create_layout         -> create_named_layout                                    {% $first                %}
 create_named_layout   -> "create" __ "layout" __ %id _ stop                     {% $create_layout        %}
 #...........................................................................................................
@@ -156,13 +157,19 @@ set                   -> set_debug                                              
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop            {% $set_debug            %}
 #...........................................................................................................
-# id                    -> "#" [a-z_]:+                                         {% $name                 %}
+select                -> "select" __ selectors _ stop                                     {% $first                %}
+#...........................................................................................................
 clasz                 -> "." [a-z_]:+                                           {% $name                 %}
-stop                  -> %semicolon
-# boolean               -> "true" | "false"                                       {% $boolean              %}
-selector              -> cellkey                                                {% $first                %}
-selector              -> rangekey                                               {% $first                %}
-selector              -> %star                                                  {% $first                %}
+stop                  -> %semicolon                                             {% $first                %}
+selectors             -> selector                                               {% $first                %}
+selectors             -> selector_comma:+ selector                              {% $first                %}
+selector_comma        -> selector %comma                                        {% $first                %}
+selector              -> abstract_selector                                      {% $first                %}
+selector              -> cell_selector                                          {% $first                %}
+abstract_selector     -> %id                                                    {% $first                %}
+cell_selector         -> cellkey                                                {% $first                %}
+cell_selector         -> rangekey                                               {% $first                %}
+cell_selector         -> %star                                                  {% $first                %}
 gridsize              -> cellkey                                                {% $first                %}
 cellkey               -> ( %colletters | "*" ) ( %rowdigits | "*" )             {% $cellkey              %}
 rangekey              -> cellkey %upto cellkey                                  {% $rangekey             %}
