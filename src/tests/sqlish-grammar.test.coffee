@@ -50,14 +50,14 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "basic" ] = ( T, done ) ->
   probes_and_matchers = [
-    # ["create layout #mylayout;"]
-    ["create field at A1;"]
-    ["create field #myfield at A1;"]
-    ["create field #myfield at A1..B2;"]
-    ["create field #myfield at *;"]
-    # ["set debug to false;"]
-    # ["set grid to G5;"]
-    # ["set debug to true;"]
+    ["create field at A1;",[{"type":"create_field","id":null,"selector":{"type":"cellkey","colletters":"A","rowdigits":"1"},"loc":"1#1"}]]
+    ["create field #myfield at A1;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","colletters":"A","rowdigits":"1"},"loc":"1#1"}]]
+    ["create field #myfield at A1..B2;",[{"type":"create_field","id":"#myfield","selector":{"type":"rangekey","first":{"type":"cellkey","colletters":"A","rowdigits":"1"},"second":{"type":"cellkey","colletters":"B","rowdigits":"2"}},"loc":"1#1"}]]
+    ["create field #myfield at *;",[{"type":"create_field","id":"#myfield","selector":{"type":"star"},"loc":"1#1"}]]
+    ["create layout #mylayout;",[{"type":"create_layout","id":"#mylayout","loc":"1#1"}]]
+    ["set debug to false;",[{"type":"set_debug","value":false,"loc":"1#1"}]]
+    ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","colletters":"G","rowdigits":"5"},"loc":"1#1"}]]
+    ["set debug to true;",[{"type":"set_debug","value":true,"loc":"1#1"}]]
     # ["select fields #myfield:                       set top border to 'thin, blue';"]
     # ["select fields #myfield, #thatone, .h, A1..B2: set top border to 'thin, blue';"]
     # ["select fields .caption:                       set horizontal alignment to left;"]
@@ -73,7 +73,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
       continue
     result = parser.results
     urge '36633', ( jr [ probe, result, ] )
-    # T.eq result, matcher
+    T.eq result, matcher
   #.........................................................................................................
   done()
 

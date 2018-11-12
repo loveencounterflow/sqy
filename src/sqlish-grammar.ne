@@ -30,37 +30,6 @@ flatten = ( d, n = 1 ) ->
   return ( if n is 1 then d else flatten d, n - 1 ).reduce ( ( a, b ) -> a.concat b ), []
 
 #-----------------------------------------------------------------------------------------------------------
-Σ       = ( key ) -> ( -> Symbol.for key )
-$ignore = -> null
-join    = ( x, joiner = '' ) -> x.join joiner
-$first  = ( x ) -> x[ 0 ]
-get_loc = ( token ) -> "#{token.line}##{token.col}"
-
-# #-----------------------------------------------------------------------------------------------------------
-# $float              = ( d, loc ) -> { type: 'float',      value: "#{d[ 0 ].join ''}.#{d[ 2 ].join ''}", }
-# $integer            = ( d, loc ) -> { type: 'integer',    value: ( d[ 0 ].join '' ),                    }
-
-#-----------------------------------------------------------------------------------------------------------
-$name = ( d, loc ) ->
-  type                        = 'id'
-  id                          = join flatten d
-  { type: 'id', id, }
-
-#-----------------------------------------------------------------------------------------------------------
-$cellkey = ( d, loc ) ->
-  type                        = 'cellkey'
-  [ colletters, rowdigits, ]  = flatten d, 1
-  colletters                  = join colletters
-  rowdigits                   = join rowdigits
-  { type, colletters, rowdigits, }
-
-#-----------------------------------------------------------------------------------------------------------
-$rangekey = ( d, loc ) ->
-  type                  = 'rangekey'
-  [ first, _, second, ] = d
-  { type, first, second, }
-
-#-----------------------------------------------------------------------------------------------------------
 $filter  = ( d ) -> d.filter ( x ) -> x isnt null
 
 #-----------------------------------------------------------------------------------------------------------
@@ -88,6 +57,37 @@ show = ( ref, d ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+Σ       = ( key ) -> ( -> Symbol.for key )
+$ignore = -> null
+join    = ( x, joiner = '' ) -> x.join joiner
+$first  = ( x ) -> x[ 0 ]
+get_loc = ( token ) -> "#{token.line}##{token.col}"
+
+# #-----------------------------------------------------------------------------------------------------------
+# $float              = ( d, loc ) -> { type: 'float',      value: "#{d[ 0 ].join ''}.#{d[ 2 ].join ''}", }
+# $integer            = ( d, loc ) -> { type: 'integer',    value: ( d[ 0 ].join '' ),                    }
+
+#-----------------------------------------------------------------------------------------------------------
+$name = ( d, loc ) ->
+  type                        = 'id'
+  id                          = join flatten d
+  { type: 'id', id, }
+
+#-----------------------------------------------------------------------------------------------------------
+$cellkey = ( d, loc ) ->
+  type                        = 'cellkey'
+  [ colletters, rowdigits, ]  = flatten d, 1
+  colletters                  = colletters.value
+  rowdigits                   = rowdigits.value
+  { type, colletters, rowdigits, }
+
+#-----------------------------------------------------------------------------------------------------------
+$rangekey = ( d, loc ) ->
+  type                  = 'rangekey'
+  [ first, _, second, ] = d
+  { type, first, second, }
+
+#-----------------------------------------------------------------------------------------------------------
 _create_field = ( first, selector, identifier ) ->
   loc       = get_loc first
   type      = 'create_field'
@@ -108,7 +108,7 @@ $create_unnamed_field = ( d ) ->
 #-----------------------------------------------------------------------------------------------------------
 $create_layout = ( d ) ->
   [ CREATE, _, LAYOUT, _, identifier, _, STOP, ]  = d
-  loc       = get_loc first
+  loc       = get_loc CREATE
   type      = 'create_layout'
   id        = if identifier?.type is 'id' then identifier.value else null
   { type, id, loc, }
@@ -116,23 +116,18 @@ $create_layout = ( d ) ->
 #-----------------------------------------------------------------------------------------------------------
 $set_grid = ( d, loc ) ->
   [ SET, _, GRID, _, TO, _, cellkey, _, STOP, ]  = d
-  type  = 'set_grid'
-  size  = cellkey
-  { type, size, }
-
-#-----------------------------------------------------------------------------------------------------------
-$boolean = ( d, loc ) ->
-  log '23133', d
-  type  = 'boolean'
-  { type, }
+  loc       = get_loc SET
+  type      = 'set_grid'
+  size      = cellkey
+  { type, size, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
 $set_debug = ( d, loc ) ->
   [ SET, _, DEBUG, _, TO, _, toggle, _, STOP, ]  = d
-  # log '23774', d
-  # log '23774', toggle
-  type  = 'set_debug'
-  { type, toggle, }
+  loc       = get_loc SET
+  type      = 'set_debug'
+  value     = toggle.value
+  { type, value, loc, }
 
 
 ###======================================================================================================###
@@ -142,48 +137,38 @@ $set_debug = ( d, loc ) ->
 @lexer lexer
 
 #-----------------------------------------------------------------------------------------------------------
-phrase                -> create                                             {% $first             %}
-phrase                -> set                                                {% $first             %}
+phrase                -> create                                                 {% $first                %}
+phrase                -> set                                                    {% $first                %}
 #...........................................................................................................
-create                -> create_field                                       {% $first             %}
-create                -> create_layout                                      {% $first             %}
+create                -> create_field                                           {% $first                %}
+create                -> create_layout                                          {% $first                %}
 #...........................................................................................................
-create_field          -> create_named_field                                 {% $first             %}
-create_field          -> create_unnamed_field                               {% $first             %}
-create_named_field    -> "create" __ "field" __ %id __ "at" __ selector _ STOP   {% $create_named_field      %}
-create_unnamed_field  -> "create" __ "field" __       "at" __ selector _ STOP   {% $create_unnamed_field      %}
-create_layout         -> create_named_layout                                {% $first             %}
-create_named_layout   -> "create" __ "layout" __ %id _ STOP                      {% $create_layout     %}
+create_field          -> create_named_field                                     {% $first                %}
+create_field          -> create_unnamed_field                                   {% $first                %}
+create_named_field    -> "create" __ "field" __ %id __ "at" __ selector _ stop  {% $create_named_field   %}
+create_unnamed_field  -> "create" __ "field" __        "at" __ selector _ stop  {% $create_unnamed_field %}
+create_layout         -> create_named_layout                                    {% $first                %}
+create_named_layout   -> "create" __ "layout" __ %id _ stop                     {% $create_layout        %}
 #...........................................................................................................
-set                   -> set_grid                                           {% $first             %}
-set                   -> set_debug                                          {% $first             %}
+set                   -> set_grid                                               {% $first                %}
+set                   -> set_debug                                              {% $first                %}
 #...........................................................................................................
-set_grid              -> SET __ GRID __   TO __ cellkey _ STOP              {% $set_grid          %}
-set_debug             -> SET __ DEBUG __  TO __ boolean _ STOP              {% $set_debug         %}
+set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop            {% $set_grid             %}
+set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop            {% $set_debug            %}
 #...........................................................................................................
-# id                    -> "#" [a-z_]:+                                       {% $name              %}
-clasz                 -> "." [a-z_]:+                                       {% $name              %}
-boolean               -> "true" | "false"                                      # {% $boolean           %}
-selector              -> cellkey                                            {% $first             %}
-selector              -> rangekey                                           {% $first             %}
-selector              -> %star                                              {% $first             %}
-cellkey               -> ( [A-Z]:+ | "*" ) ( [0-9]:+ | "*" )                 {% $cellkey           %}
-rangekey              -> cellkey UPTO cellkey                               {% $rangekey          %}
+# id                    -> "#" [a-z_]:+                                         {% $name                 %}
+clasz                 -> "." [a-z_]:+                                           {% $name                 %}
+stop                  -> %semicolon
+# boolean               -> "true" | "false"                                       {% $boolean              %}
+selector              -> cellkey                                                {% $first                %}
+selector              -> rangekey                                               {% $first                %}
+selector              -> %star                                                  {% $first                %}
+gridsize              -> cellkey                                                {% $first                %}
+cellkey               -> ( %colletters | "*" ) ( %rowdigits | "*" )             {% $cellkey              %}
+rangekey              -> cellkey %upto cellkey                                  {% $rangekey             %}
 #...........................................................................................................
-__                    -> " ":+                                              {% Σ 'LWS'            %}
-_                     -> " ":*                                              {% Σ 'LWS'            %}
-STOP                  -> ";"                                                {% Σ 'STOP'           %}
-CREATE                -> "create"                                           {% Σ 'CREATE'         %}
-LAYOUT                -> "layout"                                           {% Σ 'LAYOUT'         %}
-GRID                  -> "grid"                                             {% Σ 'GRID'           %}
-DEBUG                 -> "debug"                                            {% Σ 'DEBUG'           %}
-SET                   -> "set"                                              {% Σ 'SET'            %}
-FIELD                 -> "field"                                            {% Σ 'FIELD'          %}
-AT                    -> "at"                                               {% Σ 'AT'             %}
-TO                    -> "to"                                               {% Σ 'TO'             %}
-UPTO                  -> ".."                                               {% Σ 'UPTO'           %}
-# TRUE                  -> "true"                                               {% Σ 'TRUE'           %}
-# FALSE                 -> "false"                                            {% Σ 'FALSE'          %}
+__                    -> " ":+                                                  {% Σ 'LWS'               %}
+_                     -> " ":*                                                  {% Σ 'LWS'               %}
 
 
 @{% ### ====================================================================================================
