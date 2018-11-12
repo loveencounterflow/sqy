@@ -50,8 +50,12 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "basic" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["set debug to false;"]
-    # ["create field at A1;"]
+    # ["create layout #mylayout;"]
+    ["create field at A1;"]
+    ["create field #myfield at A1;"]
+    ["create field #myfield at A1..B2;"]
+    ["create field #myfield at *;"]
+    # ["set debug to false;"]
     # ["set grid to G5;"]
     # ["set debug to true;"]
     # ["select fields #myfield:                       set top border to 'thin, blue';"]
