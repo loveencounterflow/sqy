@@ -41,28 +41,26 @@ keywords = MOO.keywords {
   }
 
 syntax =
-  # comment:    /\/\/.*?$/
-  # number:     /0|[1-9][0-9]*/
-  dq_string:  /"(?:\\["\\]|[^\n"\\])*"/
-  sq_string:  /'(?:\\['\\]|[^\n'\\])*'/
-  halign:     /horizontal\s+alignment|halign/
-  valign:     /vertical\s+alignment|valign/
+  dq_string:  /// " (?: \\[ " \\ ] | [^ \n " \\ ] )* " ///
+  sq_string:  /// ' (?: \\[ ' \\ ] | [^ \n ' \\ ] )* ' ///
+  halign:     /// horizontal  \s+ alignment | halign ///
+  valign:     /// vertical    \s+ alignment | valign ///
   # lparen:     '('
   # rparen:     ')'
-  id:         /// \# [-a-z]+ ///
-  clasz:      /// \. [-a-z]+ ///
-  name:       { match: /[a-z]+/, type: keywords }
+  id:         /// \# [-_a-z]+ ///
+  clasz:      /// \. [-_a-z]+ ///
+  name:       { match: /// [a-z]+ ///, type: keywords, }
   upto:       /// \.\. ///
   # cellkey:    /// \*{1,2} | (?: (?: \* | [A-Z]+ ) (?: \* | [0-9]+ ) ) ///
-  rowletters: /[A-Z]+/
-  coldigits:  /[0-9]+/
-  dubstar:    '**'
-  lonestar:   '*'
+  rowletters: /// [A-Z]+ ///
+  coldigits:  /// [0-9]+ ///
+  star:       /// \* ///
+  upto:       '..'
   comma:      ','
   colon:      ':'
   semicolon:  ';'
-  lws:        /[ \t]+/
-  nl:         { match: /\n/, lineBreaks: true }
+  lws:        /// [ \x20 \t ]+ ///
+  nl:         { match: /// \n ///, lineBreaks: true }
 
 @lexer = MOO.compile syntax
 
