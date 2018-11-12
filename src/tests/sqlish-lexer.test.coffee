@@ -44,7 +44,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["create layout #mylayout;","create,layout,id/'#mylayout',semicolon/';'"]
     ["create field at A1..B2;","create,field,at,rowletters/'A',coldigits/'1',upto/'..',rowletters/'B',coldigits/'2',semicolon/';'"]
     ["set grid to G5;","set,grid,to,rowletters/'G',coldigits/'5',semicolon/';'"]
-    ["set debug to false;","set,name/'debug',to,boolean/'false',semicolon/';'"]
+    ["set debug to false;","set,name/'debug',to,boolean/false,semicolon/';'"]
     ["create field at A1;","create,field,at,rowletters/'A',coldigits/'1',semicolon/';'"]
     ["create field at A1..B2;","create,field,at,rowletters/'A',coldigits/'1',upto/'..',rowletters/'B',coldigits/'2',semicolon/';'"]
     ["create field #myfield at A1..B2;","create,field,id/'#myfield',at,rowletters/'A',coldigits/'1',upto/'..',rowletters/'B',coldigits/'2',semicolon/';'"]

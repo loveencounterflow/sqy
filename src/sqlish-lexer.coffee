@@ -35,7 +35,6 @@ keywords = MOO.keywords {
   at:         'at'
   to:         'to'
   edge:       words_of 'top left bottom right center'
-  boolean:    words_of 'true false'
 
   # halign:     /horizontal\s+alignment/
   }
@@ -49,11 +48,12 @@ syntax =
   # rparen:     ')'
   id:         /// \# [-_a-z]+ ///
   clasz:      /// \. [-_a-z]+ ///
+  boolean:    { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
   name:       { match: /// [a-z]+ ///, type: keywords, }
   upto:       /// \.\. ///
   # cellkey:    /// \*{1,2} | (?: (?: \* | [A-Z]+ ) (?: \* | [0-9]+ ) ) ///
-  rowletters: /// [A-Z]+ ///
-  coldigits:  /// [0-9]+ ///
+  colletters: /// [A-Z]+ ///
+  rowdigits:  /// [0-9]+ ///
   star:       /// \* ///
   upto:       '..'
   comma:      ','
