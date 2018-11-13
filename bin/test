@@ -20,8 +20,9 @@ function warn () { set +u;  printf "$grey""SQLISH ""$red%s$reset\n" "$1 $2 $3 $4
 
 # NOTE avoiding `coffee --watch` to kick in, in case it is running
 # NOTE hotfix for https://github.com/kach/nearley/issues/412
+	# | sed --regexp-extended 's/(\(lexer.has\("[^"]+"\) \? \{type: "[^"]+"\} : [^"]+\))/```\1```/g' \
 nearleyc src/sqlish-grammar.ne \
-	| sed --regexp-extended 's/(\(lexer.has\("[^"]+"\) \? \{type: "[^"]+"\} : [^"]+\))/```\1```/g' \
+	| sed --regexp-extended 's/\(lexer.has\("[^"]+"\) \? (\{type: "[^"]+"\}) : [^"]+\)/\1/g' \
 	> src/sqlish-grammar.pre
 coffee -o lib -c src/sqlish-grammar.pre
 trash src/sqlish-grammar.pre
