@@ -56,20 +56,16 @@ enumerate = ( iterator ) ->
 #-----------------------------------------------------------------------------------------------------------
 show = ( ref, d ) ->
   for token, idx in d
-    # log token
     log ( CND.grey ref ), ( CND.white idx ), ( CND.yellow jr token )
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-Σ       = ( key             ) -> ( -> Symbol.for key )
-$ignore =                     -> null
-join    = ( x, joiner = ''  ) -> x.join joiner
-$first  = ( x               ) -> x[ 0 ]
-get_loc = ( token           ) -> "#{token.line}##{token.col}"
-
-# #-----------------------------------------------------------------------------------------------------------
-# $float              = ( d, loc ) -> { type: 'float',      value: "#{d[ 0 ].join ''}.#{d[ 2 ].join ''}", }
-# $integer            = ( d, loc ) -> { type: 'integer',    value: ( d[ 0 ].join '' ),                    }
+Σ             = ( key             ) -> ( -> Symbol.for key )
+$ignore       =                     -> null
+join          = ( x, joiner = ''  ) -> x.join joiner
+get_loc       = ( token           ) -> "#{token.line}##{token.col}"
+$first        = ( x               ) -> x[ 0 ]
+$first_value  = ( type            ) -> ( d ) -> { type, value: d[ 0 ].value }
 
 #-----------------------------------------------------------------------------------------------------------
 $clasz = ( d ) ->
