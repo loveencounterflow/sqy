@@ -66,6 +66,8 @@ join          = ( x, joiner = ''  ) -> x.join joiner
 get_loc       = ( token           ) -> "#{token.line}##{token.col}"
 $first        = ( x               ) -> x[ 0 ]
 $first_value  = ( type            ) -> ( d ) -> { type, value: d[ 0 ].value }
+$last         = ( x               ) -> x[ x.length - 1 ]
+
 
 #-----------------------------------------------------------------------------------------------------------
 $clasz = ( d ) ->
@@ -136,6 +138,15 @@ $set_ctx_border = ( d ) ->
   { type, edges, style, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
+$set_sel_border = ( d ) ->
+  [ SET, edges, BORDER, OF, selectors, TO, style, ] = filtered d
+  loc       = get_loc SET
+  type      = 'set_sel_border'
+  style     = style.value
+  edges     = ( edge.value for edge in edges )
+  { type, edges, selectors, style, loc, }
+
+#-----------------------------------------------------------------------------------------------------------
 $assignment = ( d ) ->
   [ SET, vname, TO, value, ] = filtered d
   type = switch value.type
@@ -163,7 +174,13 @@ $select_fields = ( d ) ->
   type      = 'select_fields'
   return { type, selectors, loc, }
 
+$_show = ( ref ) -> ( x ) -> debug '44431', x
 
+$filter_flatten = ( d ) -> filtered flatten d, 2
+
+$only_one = ( d ) ->
+  throw new Error "µ44909 detected ambiguous grammar #{rpr d}" unless d.length is 1
+  return d[ 0 ]
 
 ###======================================================================================================###
 %}
@@ -172,29 +189,34 @@ $select_fields = ( d ) ->
 @lexer lexer
 
 #-----------------------------------------------------------------------------------------------------------
-phrase                -> create                                                     {% $first                %}
-phrase                -> set                                                        {% $first                %}
-phrase                -> select                                                     {% $first                %}
+source                -> _ phrase source                                                    {% $filter_flatten               %}
+source                -> _ phrase                                                   {% $last               %}
+#-----------------------------------------------------------------------------------------------------------
+phrase                -> create                                                     {% $only_one             %}
+phrase                -> set                                                        {% $only_one             %}
+phrase                -> select                                                     {% $only_one             %}
 #...........................................................................................................
 create                -> create_field                                               {% $first                %}
 create                -> create_layout                                              {% $first                %}
 #...........................................................................................................
 create_field          -> create_named_field                                         {% $first                %}
 create_field          -> create_unnamed_field                                       {% $first                %}
-create_named_field    -> "create" __ "field" __ id  __ "at" __ cell_selector _ stop {% $create_named_field   %}
-create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector _ stop {% $create_unnamed_field %}
+create_named_field    -> "create" __ "field" __ id  __ "at" __ cell_selector s {% $create_named_field   %}
+create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector s {% $create_unnamed_field %}
 create_layout         -> create_named_layout                                        {% $first                %}
-create_named_layout   -> "create" __ "layout" __ id  _ stop                         {% $create_layout        %}
+create_named_layout   -> "create" __ "layout" __ id  s                         {% $create_layout        %}
 #...........................................................................................................
 set                   -> set_grid                                                   {% $first                %}
 set                   -> set_debug                                                  {% $first                %}
 set                   -> assignment                                                 {% $first                %}
 set                   -> set_ctx_border                                             {% $first                %}
+set                   -> set_sel_border                                             {% $first                %}
 #...........................................................................................................
-set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop               {% $set_grid             %}
-set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop                {% $set_debug            %}
-set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style _ stop         {% $set_ctx_border       %}
-assignment             -> "set" __ %vname  __ "to" __ value _ stop                  {% $assignment           %}
+set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s               {% $set_grid             %}
+set_debug             -> "set" __ "debug" __ "to" __ %boolean s                {% $set_debug            %}
+set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s         {% $set_ctx_border       %}
+set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to" __ style s         {% $set_sel_border       %}
+assignment            -> "set" __ %vname  __ "to" __ value s                   {% $assignment           %}
 value                 -> string                                                     {% $first                %}
 value                 -> number                                                     {% $first                %}
 value                 -> %boolean                                                   {% $first                %}
@@ -211,13 +233,8 @@ edges                 -> edge
 edge_comma            -> edge _ %comma _                                            {% $first                %}
 edge                  -> %edge                                                      {% $first_value 'edge'   %}
 #...........................................................................................................
-clasz                 -> "." [a-z_]:+                                               {% $clasz                %}
-stop                  -> %semicolon                                                 {% $first                %}
-gridsize              -> cellkey                                                    {% $first                %}
-id                    -> %id                                                        {% $id                   %}
-#...........................................................................................................
 select                -> select_fields                                              {% $first                %}
-select_fields         -> "select" __ "fields" __ selectors _ stop                   {% $select_fields        %}
+select_fields         -> "select" __ "fields" __ selectors s                   {% $select_fields        %}
 selectors             -> selector_comma:+ selector                                  {% $flatten              %}
 selectors             -> selector                                                   {% $flatten              %}
 selector_comma        -> selector _ %comma _                                        {% $first                %}
@@ -229,8 +246,13 @@ cell_selector         -> rangekey                                               
 rangekey              -> cellkey %upto cellkey                                      {% $rangekey             %}
 cellkey               -> %cellkey                                                   {% $cellkey              %}
 #...........................................................................................................
-__                    -> " ":+                                                      {% Σ 'LWS'               %}
-_                     -> " ":*                                                      {% Σ 'LWS'               %}
+clasz                 -> "." [a-z_]:+                                               {% $clasz                %}
+s                  -> %semicolon                                                 {% $first                %}
+gridsize              -> cellkey                                                    {% $first                %}
+id                    -> %id                                                        {% $id                   %}
+#...........................................................................................................
+__                    -> %lws:+                                             {% $ignore               %}
+_                     -> %lws:*                                             {% $ignore               %}
 
 
 @{% ### ====================================================================================================

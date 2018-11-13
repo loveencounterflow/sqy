@@ -30,6 +30,7 @@ keywords = MOO.keywords {
   field:      'field'
   fields:     'fields'
   border:     'border'
+  borders:    'borders'
   grid:       'grid'
   select:     'select'
   at:         'at'
@@ -40,30 +41,26 @@ keywords = MOO.keywords {
   }
 
 syntax =
-  dq_string:  { match: /// " (?: \\[ " \\ ] | [^ \n " \\ ] )* " ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
-  sq_string:  { match: /// ' (?: \\[ ' \\ ] | [^ \n ' \\ ] )* ' ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
-  halign:     /// horizontal  \s+ alignment | halign ///
-  valign:     /// vertical    \s+ alignment | valign ///
-  # lparen:     '('
-  # rparen:     ')'
-  id:         /// \# [-_a-z]+ ///
-  clasz:      /// \. [-_a-z]+ ///
-  vname:      /// \$ [-_a-z]+ ///
-  boolean:    { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
-  name:       { match: /// [a-z]+ ///, type: keywords, }
-  upto:       /// \.\. ///
-  cellkey:    /// \*[-+]?[0-9]+ | [-+]?[A-Z]+\* | [-+]?[A-Z]+[-+]?[0-9]+ | \* ///
-  # colletters: /// [A-Z]+ ///
-  # rowdigits:  /// [0-9]+ ///
-  float:      { match: /// [-+]? (?: 0 | [1-9][0-9]* ) \.[0-9]+ ///, value: ( ( s ) -> parseFloat s     ) }
-  integer:    { match: /// [-+]? (?: 0 | [1-9][0-9]* ) ///,          value: ( ( s ) -> parseInt   s, 10 ) }
-  # star:       /// \* ///
-  upto:       '..'
-  comma:      ','
-  colon:      ':'
-  semicolon:  ';'
-  lws:        /// [ \x20 \t ]+ ///
-  nl:         { match: /// \n ///, lineBreaks: true }
+  dq_string:        { match: /// " (?: \\[ " \\ ] | [^ \n " \\ ] )* " ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
+  sq_string:        { match: /// ' (?: \\[ ' \\ ] | [^ \n ' \\ ] )* ' ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
+  halign:           /// horizontal  \s+ alignment | halign ///
+  valign:           /// vertical    \s+ alignment | valign ///
+  id:               /// \# [-_a-z]+ ///
+  clasz:            /// \. [-_a-z]+ ///
+  vname:            /// \$ [-_a-z]+ ///
+  boolean:          { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
+  name:             { match: /// [a-z]+ ///, type: keywords, }
+  upto:             /// \.\. ///
+  cellkey:          /// \*[-+]?[0-9]+ | [-+]?[A-Z]+\* | [-+]?[A-Z]+[-+]?[0-9]+ | \* ///
+  float:            { match: /// [-+]? (?: 0 | [1-9][0-9]* ) \.[0-9]+ ///, value: ( ( s ) -> parseFloat s     ) }
+  integer:          { match: /// [-+]? (?: 0 | [1-9][0-9]* ) ///,          value: ( ( s ) -> parseInt   s, 10 ) }
+  # star:             /// \* ///
+  upto:             '..'
+  comma:            ','
+  colon:            ':'
+  semicolon:        /// \s* ; \s* ///
+  lws:              /// [ \x20 \t ]+ ///
+  nl:               { match: /// \n ///, lineBreaks: true }
 
 @lexer = MOO.compile syntax
 
