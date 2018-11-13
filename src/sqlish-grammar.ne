@@ -61,11 +61,11 @@ show = ( ref, d ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-Σ       = ( key ) -> ( -> Symbol.for key )
-$ignore = -> null
-join    = ( x, joiner = '' ) -> x.join joiner
-$first  = ( x ) -> x[ 0 ]
-get_loc = ( token ) -> "#{token.line}##{token.col}"
+Σ       = ( key             ) -> ( -> Symbol.for key )
+$ignore =                     -> null
+join    = ( x, joiner = ''  ) -> x.join joiner
+$first  = ( x               ) -> x[ 0 ]
+get_loc = ( token           ) -> "#{token.line}##{token.col}"
 
 # #-----------------------------------------------------------------------------------------------------------
 # $float              = ( d, loc ) -> { type: 'float',      value: "#{d[ 0 ].join ''}.#{d[ 2 ].join ''}", }
@@ -78,7 +78,7 @@ $name = ( d, loc ) ->
   { type: 'id', id, }
 
 #-----------------------------------------------------------------------------------------------------------
-$cellkey = ( d, loc ) ->
+$cellkey = ( d ) ->
   type                        = 'cellkey'
   [ colletters, rowdigits, ]  = flatten d, 1
   colletters                  = colletters.value
@@ -86,7 +86,7 @@ $cellkey = ( d, loc ) ->
   { type, colletters, rowdigits, }
 
 #-----------------------------------------------------------------------------------------------------------
-$rangekey = ( d, loc ) ->
+$rangekey = ( d ) ->
   type                  = 'rangekey'
   [ first, _, second, ] = d
   { type, first, second, }
