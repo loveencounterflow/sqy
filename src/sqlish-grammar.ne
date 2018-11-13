@@ -73,28 +73,27 @@ get_loc = ( token           ) -> "#{token.line}##{token.col}"
 
 #-----------------------------------------------------------------------------------------------------------
 $clasz = ( d ) ->
-  type                        = 'clasz'
-  id                          = d[ 0 ].value
+  type    = 'clasz'
+  id      = d[ 0 ].value
   { type: 'clasz', id, }
 
 #-----------------------------------------------------------------------------------------------------------
 $id = ( d ) ->
-  type                        = 'id'
-  id                          = d[ 0 ].value
+  type    = 'id'
+  id      = d[ 0 ].value
   { type: 'id', id, }
 
 #-----------------------------------------------------------------------------------------------------------
 $cellkey = ( d ) ->
-  type                        = 'cellkey'
-  [ colletters, rowdigits, ]  = flatten d, 1
-  colletters                  = colletters.value
-  rowdigits                   = rowdigits.value
-  { type, colletters, rowdigits, }
+  type    = 'cellkey'
+  value   = d[ 0 ].value
+  { type, value, }
 
 #-----------------------------------------------------------------------------------------------------------
 $rangekey = ( d ) ->
-  type                  = 'rangekey'
-  [ first, _, second, ] = d
+  # debug '$rangekey', d
+  type                      = 'rangekey'
+  [ first, UPTO, second, ]  = d
   { type, first, second, }
 
 #-----------------------------------------------------------------------------------------------------------
@@ -117,7 +116,7 @@ $create_unnamed_field = ( d ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 $create_layout = ( d ) ->
-  [ CREATE, _, LAYOUT, _, id, _, STOP, ]  = d
+  [ CREATE, LAYOUT, id, ] = filtered d
   loc       = get_loc CREATE
   type      = 'create_layout'
   id        = id.id
@@ -125,15 +124,24 @@ $create_layout = ( d ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 $set_grid = ( d, loc ) ->
-  [ SET, _, GRID, _, TO, _, cellkey, _, STOP, ]  = d
+  [ SET, GRID, TO, cellkey, ] = filtered d
   loc       = get_loc SET
   type      = 'set_grid'
   size      = cellkey
   { type, size, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
+$set_vname = ( d, loc ) ->
+  [ SET, vname, TO, value, ] = filtered d
+  loc       = get_loc SET
+  type      = 'set_vname'
+  id        = vname.value
+  value     = value.value
+  { type, id, value, loc, }
+
+#-----------------------------------------------------------------------------------------------------------
 $set_debug = ( d, loc ) ->
-  [ SET, _, DEBUG, _, TO, _, toggle, _, STOP, ]  = d
+  [ SET, DEBUG, TO, toggle, ] = filtered d
   loc       = get_loc SET
   type      = 'set_debug'
   value     = toggle.value
@@ -171,11 +179,20 @@ create_named_layout   -> "create" __ "layout" __ id  _ stop                     
 #...........................................................................................................
 set                   -> set_grid                                                   {% $first                %}
 set                   -> set_debug                                                  {% $first                %}
+set                   -> set_vname                                                  {% $first                %}
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop               {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop                {% $set_debug            %}
+set_vname             -> "set" __ %vname  __ "to" __ value _ stop                   {% $set_vname            %}
+value                 -> string                                                    {% $first                %}
+value                 -> number                                                    {% $first                %}
+value                 -> %boolean                                                   {% $first                %}
+string                -> %dq_string {% $first                %}
+string                -> %sq_string {% $first                %}
+number                -> %integer       {% $first                %}
+number                -> %float       {% $first                %}
 #...........................................................................................................
-clasz                 -> "." [a-z_]:+                                               {% $name                 %}
+clasz                 -> "." [a-z_]:+                                               {% $clasz                %}
 stop                  -> %semicolon                                                 {% $first                %}
 gridsize              -> cellkey                                                    {% $first                %}
 id                    -> %id                                                        {% $id                   %}
@@ -188,11 +205,10 @@ selector_comma        -> selector _ %comma _                                    
 selector              -> abstract_selector                                          {% $first                %}
 selector              -> cell_selector                                              {% $first                %}
 abstract_selector     -> id                                                         {% $first                %}
-cell_selector         -> cellkey                                                    {% $first                %}
+cell_selector         -> cellkey                                                   {% $first                %}
 cell_selector         -> rangekey                                                   {% $first                %}
-cell_selector         -> %star                                                      {% $first                %}
-cellkey               -> ( %colletters | "*" ) ( %rowdigits | "*" )                 {% $cellkey              %}
 rangekey              -> cellkey %upto cellkey                                      {% $rangekey             %}
+cellkey               -> %cellkey                                                   {% $cellkey                %}
 #...........................................................................................................
 __                    -> " ":+                                                      {% Σ 'LWS'               %}
 _                     -> " ":*                                                      {% Σ 'LWS'               %}

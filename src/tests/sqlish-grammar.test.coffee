@@ -50,24 +50,27 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "basic" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["create field at A1;",[{"type":"create_field","id":null,"selector":{"type":"cellkey","colletters":"A","rowdigits":"1"},"loc":"1#1"}]]
-    ["create field #myfield at A1;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","colletters":"A","rowdigits":"1"},"loc":"1#1"}]]
-    ["create field #myfield at A1..B2;",[{"type":"create_field","id":"#myfield","selector":{"type":"rangekey","first":{"type":"cellkey","colletters":"A","rowdigits":"1"},"second":{"type":"cellkey","colletters":"B","rowdigits":"2"}},"loc":"1#1"}]]
-    ["create field #myfield at *;",[{"type":"create_field","id":"#myfield","selector":{"type":"star"},"loc":"1#1"}]]
     ["create layout #mylayout;",[{"type":"create_layout","id":"#mylayout","loc":"1#1"}]]
+    ["create field at A1;",[{"type":"create_field","id":null,"selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
+    ["create field #myfield at A1;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
+    ["create field #myfield at A1..B2;",[{"type":"create_field","id":"#myfield","selector":{"type":"rangekey","first":{"type":"cellkey","value":"A1"},"second":{"type":"cellkey","value":"B2"}},"loc":"1#1"}]]
+    ["create field #myfield at *;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"*"},"loc":"1#1"}]]
     ["set debug to false;",[{"type":"set_debug","value":false,"loc":"1#1"}]]
-    ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","colletters":"G","rowdigits":"5"},"loc":"1#1"}]]
+    ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","value":"G5"},"loc":"1#1"}]]
     ["set debug to true;",[{"type":"set_debug","value":true,"loc":"1#1"}]]
     ["select D3;",null]
-    ["select fields D3;",[{"type":"select_fields","selectors":[{"type":"cellkey","colletters":"D","rowdigits":"3"}],"loc":"1#1"}]]
-    ["select fields D3..E6;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"3"},"second":{"type":"cellkey","colletters":"E","rowdigits":"6"}}],"loc":"1#1"}]]
-    ["select fields D12..E34,AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"12"},"second":{"type":"cellkey","colletters":"E","rowdigits":"34"}},{"type":"cellkey","colletters":"AA","rowdigits":"11"}],"loc":"1#1"}]]
-    ["select fields D12..E34, AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"12"},"second":{"type":"cellkey","colletters":"E","rowdigits":"34"}},{"type":"cellkey","colletters":"AA","rowdigits":"11"}],"loc":"1#1"}]]
+    ["select fields D3;",[{"type":"select_fields","selectors":[{"type":"cellkey","value":"D3"}],"loc":"1#1"}]]
+    ["select fields D3..E6;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D3"},"second":{"type":"cellkey","value":"E6"}}],"loc":"1#1"}]]
+    ["select fields D12..E34,AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
+    ["select fields D12..E34, AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
+    ["select fields #myfield;",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"}]]
+    ["set $foobar to 'some text';",[{"type":"set_vname","id":"$foobar","value":"some text","loc":"1#1"}]]
+    # ["set top border to 'thin, blue';"]
+    # ["select fields #myfield;                       set top border to 'thin, blue';"]
     # ["select fields #myfield;                       set top border to 'thin, blue';"]
     # ["select fields #myfield, #thatone, .h, A1..B2; set top border to 'thin, blue';"]
     # ["select fields .caption;                       set horizontal alignment to left;"]
 
-    # ["set $foobar to 'value';"]
     # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
     ]
   #.........................................................................................................
@@ -78,7 +81,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     catch error
       # throw error
       if matcher is null then T.ok true else T.fail error.message
-      urge '36633', ( jr [ probe, null, ] )
+      warn '36633', ( jr [ probe, null, ] )
       continue
     result = parser.results
     urge '36633', ( jr [ probe, result, ] )
