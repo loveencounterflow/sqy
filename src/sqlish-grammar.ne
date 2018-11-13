@@ -72,9 +72,15 @@ get_loc = ( token           ) -> "#{token.line}##{token.col}"
 # $integer            = ( d, loc ) -> { type: 'integer',    value: ( d[ 0 ].join '' ),                    }
 
 #-----------------------------------------------------------------------------------------------------------
-$name = ( d, loc ) ->
+$clasz = ( d ) ->
+  type                        = 'clasz'
+  id                          = d[ 0 ].value
+  { type: 'clasz', id, }
+
+#-----------------------------------------------------------------------------------------------------------
+$id = ( d ) ->
   type                        = 'id'
-  id                          = join flatten d
+  id                          = d[ 0 ].value
   { type: 'id', id, }
 
 #-----------------------------------------------------------------------------------------------------------
@@ -92,17 +98,17 @@ $rangekey = ( d ) ->
   { type, first, second, }
 
 #-----------------------------------------------------------------------------------------------------------
-_create_field = ( first, selector, identifier ) ->
+_create_field = ( first, selector, id ) ->
   loc       = get_loc first
   type      = 'create_field'
-  id        = if identifier?.type is 'id' then identifier.value else null
   selector  = { type: 'star', } if selector.type is 'star'
+  id        = id?.id ? null
   { type, id, selector, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
 $create_named_field = ( d ) ->
-  [ CREATE, FIELD, identifier, AT, selector, ] = filtered d
-  return _create_field CREATE, selector, identifier
+  [ CREATE, FIELD, id, AT, selector, ] = filtered d
+  return _create_field CREATE, selector, id
 
 #-----------------------------------------------------------------------------------------------------------
 $create_unnamed_field = ( d ) ->
@@ -111,10 +117,10 @@ $create_unnamed_field = ( d ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 $create_layout = ( d ) ->
-  [ CREATE, _, LAYOUT, _, identifier, _, STOP, ]  = d
+  [ CREATE, _, LAYOUT, _, id, _, STOP, ]  = d
   loc       = get_loc CREATE
   type      = 'create_layout'
-  id        = if identifier?.type is 'id' then identifier.value else null
+  id        = id.id
   { type, id, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
@@ -158,10 +164,10 @@ create                -> create_layout                                          
 #...........................................................................................................
 create_field          -> create_named_field                                         {% $first                %}
 create_field          -> create_unnamed_field                                       {% $first                %}
-create_named_field    -> "create" __ "field" __ %id __ "at" __ cell_selector _ stop {% $create_named_field   %}
+create_named_field    -> "create" __ "field" __ id  __ "at" __ cell_selector _ stop {% $create_named_field   %}
 create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector _ stop {% $create_unnamed_field %}
 create_layout         -> create_named_layout                                        {% $first                %}
-create_named_layout   -> "create" __ "layout" __ %id _ stop                         {% $create_layout        %}
+create_named_layout   -> "create" __ "layout" __ id  _ stop                         {% $create_layout        %}
 #...........................................................................................................
 set                   -> set_grid                                                   {% $first                %}
 set                   -> set_debug                                                  {% $first                %}
@@ -172,6 +178,7 @@ set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop            
 clasz                 -> "." [a-z_]:+                                               {% $name                 %}
 stop                  -> %semicolon                                                 {% $first                %}
 gridsize              -> cellkey                                                    {% $first                %}
+id                    -> %id                                                        {% $id                   %}
 #...........................................................................................................
 select                -> select_fields                                              {% $first                %}
 select_fields         -> "select" __ "fields" __ selectors _ stop                   {% $select_fields        %}
@@ -180,7 +187,7 @@ selectors             -> selector                                               
 selector_comma        -> selector _ %comma _                                            {% $first                %}
 selector              -> abstract_selector                                          {% $first                %}
 selector              -> cell_selector                                              {% $first                %}
-abstract_selector     -> %id                                                        {% $first                %}
+abstract_selector     -> id                                                         {% $first                %}
 cell_selector         -> cellkey                                                    {% $first                %}
 cell_selector         -> rangekey                                                   {% $first                %}
 cell_selector         -> %star                                                      {% $first                %}
