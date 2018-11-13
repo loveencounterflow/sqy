@@ -96,7 +96,7 @@ $rangekey = ( d ) ->
 _create_field = ( first, selector, id ) ->
   loc       = get_loc first
   type      = 'create_field'
-  selector  = { type: 'star', } if selector.type is 'star'
+  # selector  = { type: 'star', } if selector.type is 'star'
   id        = id?.id ? null
   { type, id, selector, loc, }
 
@@ -119,7 +119,7 @@ $create_layout = ( d ) ->
   { type, id, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
-$set_grid = ( d, loc ) ->
+$set_grid = ( d ) ->
   [ SET, GRID, TO, cellkey, ] = filtered d
   loc       = get_loc SET
   type      = 'set_grid'
@@ -127,16 +127,29 @@ $set_grid = ( d, loc ) ->
   { type, size, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
-$set_vname = ( d, loc ) ->
-  [ SET, vname, TO, value, ] = filtered d
+$set_ctx_border = ( d ) ->
+  [ SET, edges, BORDER, TO, style, ] = filtered d
   loc       = get_loc SET
-  type      = 'set_vname'
-  id        = vname.value
-  value     = value.value
-  { type, id, value, loc, }
+  type      = 'set_ctx_border'
+  style     = style.value
+  edges     = ( edge.value for edge in edges )
+  { type, edges, style, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
-$set_debug = ( d, loc ) ->
+$assignment = ( d ) ->
+  [ SET, vname, TO, value, ] = filtered d
+  type = switch value.type
+    when 'sq_string', 'dq_string' then 'text'
+    when 'float',     'integer'   then 'number'
+    else value.type
+  rhs       = { type, value: value.value, }
+  loc       = get_loc SET
+  type      = 'assignment'
+  id        = vname.value
+  { type, id, rhs, loc, }
+
+#-----------------------------------------------------------------------------------------------------------
+$set_debug = ( d ) ->
   [ SET, DEBUG, TO, toggle, ] = filtered d
   loc       = get_loc SET
   type      = 'set_debug'
@@ -175,18 +188,28 @@ create_named_layout   -> "create" __ "layout" __ id  _ stop                     
 #...........................................................................................................
 set                   -> set_grid                                                   {% $first                %}
 set                   -> set_debug                                                  {% $first                %}
-set                   -> set_vname                                                  {% $first                %}
+set                   -> assignment                                                 {% $first                %}
+set                   -> set_ctx_border                                             {% $first                %}
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop               {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop                {% $set_debug            %}
-set_vname             -> "set" __ %vname  __ "to" __ value _ stop                   {% $set_vname            %}
-value                 -> string                                                    {% $first                %}
-value                 -> number                                                    {% $first                %}
+set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style _ stop         {% $set_ctx_border       %}
+assignment             -> "set" __ %vname  __ "to" __ value _ stop                  {% $assignment           %}
+value                 -> string                                                     {% $first                %}
+value                 -> number                                                     {% $first                %}
 value                 -> %boolean                                                   {% $first                %}
-string                -> %dq_string {% $first                %}
-string                -> %sq_string {% $first                %}
-number                -> %integer       {% $first                %}
-number                -> %float       {% $first                %}
+string                -> %dq_string                                                 {% $first                %}
+string                -> %sq_string                                                 {% $first                %}
+number                -> %integer                                                   {% $first                %}
+number                -> %float                                                     {% $first                %}
+style                 -> string                                                     {% $first                %}
+#...........................................................................................................
+border_s              -> "border"                                                   {% $first                %}
+border_s              -> "borders"                                                  {% $first                %}
+edges                 -> edge_comma:+ edge                                          {% $flatten              %}
+edges                 -> edge
+edge_comma            -> edge _ %comma _                                            {% $first                %}
+edge                  -> %edge                                                      {% $first_value 'edge'   %}
 #...........................................................................................................
 clasz                 -> "." [a-z_]:+                                               {% $clasz                %}
 stop                  -> %semicolon                                                 {% $first                %}
@@ -197,14 +220,14 @@ select                -> select_fields                                          
 select_fields         -> "select" __ "fields" __ selectors _ stop                   {% $select_fields        %}
 selectors             -> selector_comma:+ selector                                  {% $flatten              %}
 selectors             -> selector                                                   {% $flatten              %}
-selector_comma        -> selector _ %comma _                                            {% $first                %}
+selector_comma        -> selector _ %comma _                                        {% $first                %}
 selector              -> abstract_selector                                          {% $first                %}
 selector              -> cell_selector                                              {% $first                %}
 abstract_selector     -> id                                                         {% $first                %}
-cell_selector         -> cellkey                                                   {% $first                %}
+cell_selector         -> cellkey                                                    {% $first                %}
 cell_selector         -> rangekey                                                   {% $first                %}
 rangekey              -> cellkey %upto cellkey                                      {% $rangekey             %}
-cellkey               -> %cellkey                                                   {% $cellkey                %}
+cellkey               -> %cellkey                                                   {% $cellkey              %}
 #...........................................................................................................
 __                    -> " ":+                                                      {% Σ 'LWS'               %}
 _                     -> " ":*                                                      {% Σ 'LWS'               %}

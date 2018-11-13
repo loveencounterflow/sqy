@@ -50,22 +50,30 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "basic" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["create layout #mylayout;",[{"type":"create_layout","id":"#mylayout","loc":"1#1"}]]
-    ["create field at A1;",[{"type":"create_field","id":null,"selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
-    ["create field #myfield at A1;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
-    ["create field #myfield at A1..B2;",[{"type":"create_field","id":"#myfield","selector":{"type":"rangekey","first":{"type":"cellkey","value":"A1"},"second":{"type":"cellkey","value":"B2"}},"loc":"1#1"}]]
-    ["create field #myfield at *;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"*"},"loc":"1#1"}]]
-    ["set debug to false;",[{"type":"set_debug","value":false,"loc":"1#1"}]]
-    ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","value":"G5"},"loc":"1#1"}]]
-    ["set debug to true;",[{"type":"set_debug","value":true,"loc":"1#1"}]]
-    ["select D3;",null]
-    ["select fields D3;",[{"type":"select_fields","selectors":[{"type":"cellkey","value":"D3"}],"loc":"1#1"}]]
-    ["select fields D3..E6;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D3"},"second":{"type":"cellkey","value":"E6"}}],"loc":"1#1"}]]
-    ["select fields D12..E34,AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
-    ["select fields D12..E34, AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
-    ["select fields #myfield;",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"}]]
-    ["set $foobar to 'some text';",[{"type":"set_vname","id":"$foobar","value":"some text","loc":"1#1"}]]
-    # ["set top border to 'thin, blue';"]
+    # ["create layout #mylayout;",[{"type":"create_layout","id":"#mylayout","loc":"1#1"}]]
+    # ["create field at A1;",[{"type":"create_field","id":null,"selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
+    # ["create field #myfield at A1;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"A1"},"loc":"1#1"}]]
+    # ["create field #myfield at A1..B2;",[{"type":"create_field","id":"#myfield","selector":{"type":"rangekey","first":{"type":"cellkey","value":"A1"},"second":{"type":"cellkey","value":"B2"}},"loc":"1#1"}]]
+    # ["create field #myfield at *;",[{"type":"create_field","id":"#myfield","selector":{"type":"cellkey","value":"*"},"loc":"1#1"}]]
+    # ["set debug to false;",[{"type":"set_debug","value":false,"loc":"1#1"}]]
+    # ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","value":"G5"},"loc":"1#1"}]]
+    # ["set debug to true;",[{"type":"set_debug","value":true,"loc":"1#1"}]]
+    # ["select D3;",null]
+    # ["select fields D3;",[{"type":"select_fields","selectors":[{"type":"cellkey","value":"D3"}],"loc":"1#1"}]]
+    # ["select fields D3..E6;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D3"},"second":{"type":"cellkey","value":"E6"}}],"loc":"1#1"}]]
+    # ["select fields D12..E34,AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
+    # ["select fields D12..E34, AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","value":"D12"},"second":{"type":"cellkey","value":"E34"}},{"type":"cellkey","value":"AA11"}],"loc":"1#1"}]]
+    # ["select fields #myfield;",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"}]]
+    # ["set $foobar to 'some text';",[{"type":"assignment","id":"$foobar","rhs":{"type":"text","value":"some text"},"loc":"1#1"}]]
+    # ["set $foobar to +1.2334;",[{"type":"assignment","id":"$foobar","rhs":{"type":"number","value":1.2334},"loc":"1#1"}]]
+    ["set top border to 'thin, blue';",[{"type":"set_ctx_border","edges":["top"],"style":"thin, blue","loc":"1#1"}]]
+    ["set top, bottom border to 'thin, blue';",[{"type":"set_ctx_border","edges":["top","bottom"],"style":"thin, blue","loc":"1#1"}]]
+    ["set all, bottom border to 'thin, blue';",[{"type":"set_ctx_border","edges":["all","bottom"],"style":"thin, blue","loc":"1#1"}]]
+    ["set all border to 'thin, blue';",[{"type":"set_ctx_border","edges":["all"],"style":"thin, blue","loc":"1#1"}]]
+    ["set top, bottom borders to 'thin, blue';",[{"type":"set_ctx_border","edges":["top","bottom"],"style":"thin, blue","loc":"1#1"}]]
+    ["set all borders to 'thin, blue';",[{"type":"set_ctx_border","edges":["all"],"style":"thin, blue","loc":"1#1"}]]
+    ["set top border of C3 to 'thin, blue';"]
+    ["set top border of #thatfield to 'thick';"]
     # ["select fields #myfield;                       set top border to 'thin, blue';"]
     # ["select fields #myfield;                       set top border to 'thin, blue';"]
     # ["select fields #myfield, #thatone, .h, A1..B2; set top border to 'thin, blue';"]
@@ -80,8 +88,12 @@ join                      = ( x, joiner = '' ) -> x.join joiner
       parser.feed probe
     catch error
       # throw error
-      if matcher is null then T.ok true else T.fail error.message
-      warn '36633', ( jr [ probe, null, ] )
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
       continue
     result = parser.results
     urge '36633', ( jr [ probe, result, ] )
