@@ -51,7 +51,6 @@ syntax =
   boolean:    { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
   name:       { match: /// [a-z]+ ///, type: keywords, }
   upto:       /// \.\. ///
-  # cellkey:    /// \*{1,2} | (?: (?: \* | [A-Z]+ ) (?: \* | [0-9]+ ) ) ///
   colletters: /// [A-Z]+ ///
   rowdigits:  /// [0-9]+ ///
   star:       /// \* ///

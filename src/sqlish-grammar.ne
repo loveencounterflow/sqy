@@ -30,6 +30,9 @@ flatten = ( d, n = 1 ) ->
   return ( if n is 1 then d else flatten d, n - 1 ).reduce ( ( a, b ) -> a.concat b ), []
 
 #-----------------------------------------------------------------------------------------------------------
+$flatten = ( d, n = 1 ) -> flatten d, n
+
+#-----------------------------------------------------------------------------------------------------------
 $filter  = ( d ) -> d.filter ( x ) -> x isnt null
 
 #-----------------------------------------------------------------------------------------------------------
@@ -38,6 +41,7 @@ filter = ( d ) ->
     continue if x is null
     continue if x is Symbol.for 'LWS'
     continue if x is Symbol.for 'STOP'
+    continue if x.type is 'semicolon'
     yield x
   yield return
 
@@ -129,6 +133,14 @@ $set_debug = ( d, loc ) ->
   value     = toggle.value
   { type, value, loc, }
 
+#-----------------------------------------------------------------------------------------------------------
+$select_fields = ( d ) ->
+  [ SELECT, FIELDS, selectors, ] = filtered d
+  loc       = get_loc SELECT
+  type      = 'select_fields'
+  return { type, selectors, loc, }
+
+
 
 ###======================================================================================================###
 %}
@@ -137,45 +149,46 @@ $set_debug = ( d, loc ) ->
 @lexer lexer
 
 #-----------------------------------------------------------------------------------------------------------
-phrase                -> create                                                 {% $first                %}
-phrase                -> set                                                    {% $first                %}
-phrase                -> select                                                 {% $first                %}
+phrase                -> create                                                     {% $first                %}
+phrase                -> set                                                        {% $first                %}
+phrase                -> select                                                     {% $first                %}
 #...........................................................................................................
-create                -> create_field                                           {% $first                %}
-create                -> create_layout                                          {% $first                %}
+create                -> create_field                                               {% $first                %}
+create                -> create_layout                                              {% $first                %}
 #...........................................................................................................
-create_field          -> create_named_field                                     {% $first                %}
-create_field          -> create_unnamed_field                                   {% $first                %}
-create_named_field    -> "create" __ "field" __ %id __ "at" __ cell_selector _ stop  {% $create_named_field   %}
-create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector _ stop  {% $create_unnamed_field %}
-create_layout         -> create_named_layout                                    {% $first                %}
-create_named_layout   -> "create" __ "layout" __ %id _ stop                     {% $create_layout        %}
+create_field          -> create_named_field                                         {% $first                %}
+create_field          -> create_unnamed_field                                       {% $first                %}
+create_named_field    -> "create" __ "field" __ %id __ "at" __ cell_selector _ stop {% $create_named_field   %}
+create_unnamed_field  -> "create" __ "field" __        "at" __ cell_selector _ stop {% $create_unnamed_field %}
+create_layout         -> create_named_layout                                        {% $first                %}
+create_named_layout   -> "create" __ "layout" __ %id _ stop                         {% $create_layout        %}
 #...........................................................................................................
-set                   -> set_grid                                               {% $first                %}
-set                   -> set_debug                                              {% $first                %}
+set                   -> set_grid                                                   {% $first                %}
+set                   -> set_debug                                                  {% $first                %}
 #...........................................................................................................
-set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop            {% $set_grid             %}
-set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop            {% $set_debug            %}
+set_grid              -> "set" __ "grid"  __ "to" __ gridsize  _ stop               {% $set_grid             %}
+set_debug             -> "set" __ "debug" __ "to" __ %boolean _ stop                {% $set_debug            %}
 #...........................................................................................................
-select                -> "select" __ selectors _ stop                                     {% $first                %}
+clasz                 -> "." [a-z_]:+                                               {% $name                 %}
+stop                  -> %semicolon                                                 {% $first                %}
+gridsize              -> cellkey                                                    {% $first                %}
 #...........................................................................................................
-clasz                 -> "." [a-z_]:+                                           {% $name                 %}
-stop                  -> %semicolon                                             {% $first                %}
-selectors             -> selector                                               {% $first                %}
-selectors             -> selector_comma:+ selector                              {% $first                %}
-selector_comma        -> selector %comma                                        {% $first                %}
-selector              -> abstract_selector                                      {% $first                %}
-selector              -> cell_selector                                          {% $first                %}
-abstract_selector     -> %id                                                    {% $first                %}
-cell_selector         -> cellkey                                                {% $first                %}
-cell_selector         -> rangekey                                               {% $first                %}
-cell_selector         -> %star                                                  {% $first                %}
-gridsize              -> cellkey                                                {% $first                %}
-cellkey               -> ( %colletters | "*" ) ( %rowdigits | "*" )             {% $cellkey              %}
-rangekey              -> cellkey %upto cellkey                                  {% $rangekey             %}
+select                -> select_fields                                              {% $first                %}
+select_fields         -> "select" __ "fields" __ selectors _ stop                   {% $select_fields        %}
+selectors             -> selector_comma:+ selector                                  {% $flatten              %}
+selectors             -> selector                                                   {% $flatten              %}
+selector_comma        -> selector _ %comma _                                            {% $first                %}
+selector              -> abstract_selector                                          {% $first                %}
+selector              -> cell_selector                                              {% $first                %}
+abstract_selector     -> %id                                                        {% $first                %}
+cell_selector         -> cellkey                                                    {% $first                %}
+cell_selector         -> rangekey                                                   {% $first                %}
+cell_selector         -> %star                                                      {% $first                %}
+cellkey               -> ( %colletters | "*" ) ( %rowdigits | "*" )                 {% $cellkey              %}
+rangekey              -> cellkey %upto cellkey                                      {% $rangekey             %}
 #...........................................................................................................
-__                    -> " ":+                                                  {% Σ 'LWS'               %}
-_                     -> " ":*                                                  {% Σ 'LWS'               %}
+__                    -> " ":+                                                      {% Σ 'LWS'               %}
+_                     -> " ":*                                                      {% Σ 'LWS'               %}
 
 
 @{% ### ====================================================================================================

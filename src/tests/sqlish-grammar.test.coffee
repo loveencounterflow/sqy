@@ -58,13 +58,17 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set debug to false;",[{"type":"set_debug","value":false,"loc":"1#1"}]]
     ["set grid to G5;",[{"type":"set_grid","size":{"type":"cellkey","colletters":"G","rowdigits":"5"},"loc":"1#1"}]]
     ["set debug to true;",[{"type":"set_debug","value":true,"loc":"1#1"}]]
-    # ["set $foobar to 'value';"]
-    ["select D3..E6;"]
-    ["select D3..E6,A1;"]
-    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
+    ["select D3;",null]
+    ["select fields D3;",[{"type":"select_fields","selectors":[{"type":"cellkey","colletters":"D","rowdigits":"3"}],"loc":"1#1"}]]
+    ["select fields D3..E6;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"3"},"second":{"type":"cellkey","colletters":"E","rowdigits":"6"}}],"loc":"1#1"}]]
+    ["select fields D12..E34,AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"12"},"second":{"type":"cellkey","colletters":"E","rowdigits":"34"}},{"type":"cellkey","colletters":"AA","rowdigits":"11"}],"loc":"1#1"}]]
+    ["select fields D12..E34, AA11;",[{"type":"select_fields","selectors":[{"type":"rangekey","first":{"type":"cellkey","colletters":"D","rowdigits":"12"},"second":{"type":"cellkey","colletters":"E","rowdigits":"34"}},{"type":"cellkey","colletters":"AA","rowdigits":"11"}],"loc":"1#1"}]]
     # ["select fields #myfield;                       set top border to 'thin, blue';"]
     # ["select fields #myfield, #thatone, .h, A1..B2; set top border to 'thin, blue';"]
     # ["select fields .caption;                       set horizontal alignment to left;"]
+
+    # ["set $foobar to 'value';"]
+    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
     ]
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
@@ -72,12 +76,13 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     try
       parser.feed probe
     catch error
-      throw error
-      T.fail error.message
+      # throw error
+      if matcher is null then T.ok true else T.fail error.message
+      urge '36633', ( jr [ probe, null, ] )
       continue
     result = parser.results
     urge '36633', ( jr [ probe, result, ] )
-    # T.eq result, matcher
+    T.eq result, matcher
   #.........................................................................................................
   done()
 
