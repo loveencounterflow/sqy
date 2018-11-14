@@ -6,7 +6,7 @@
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'SQLISH/GRAMMAR'
+badge                     = 'SQY/GRAMMAR'
 log                       = CND.get_logger 'plain',     badge
 info                      = CND.get_logger 'info',      badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -18,7 +18,7 @@ urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
 
 ###======================================================================================================###
-{ lexer, }                = ( require './sqlish-lexer' )
+{ lexer, }                = require './sqy-lexer'
 
 #-----------------------------------------------------------------------------------------------------------
 log = ( P... ) -> console.log P...
@@ -256,9 +256,9 @@ _                     -> %lws:*                                                 
 
 
 @{% ### ====================================================================================================
-nearleyc sqlish.ne -o sqlish.coffee && coffee -c sqlish.coffee && nearley-test -q -i 'create field;' sqlish.js
-nearley-railroad sqlish.ne -o sqlish.html
-nearley-unparse -n 10 sqlish.js
+nearleyc sqy.ne -o sqy.coffee && coffee -c sqy.coffee && nearley-test -q -i 'create field;' sqy.js
+nearley-railroad sqy.ne -o sqy.html
+nearley-unparse -n 10 sqy.js
 
 create layout #mylayout;
 set grid to G5;

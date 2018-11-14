@@ -4,7 +4,7 @@
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'SQLISH/GRAMMAR'
+badge                     = 'SQY'
 log                       = CND.get_logger 'plain',     badge
 info                      = CND.get_logger 'info',      badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -17,8 +17,8 @@ echo                      = CND.echo.bind CND
 NEARLEY                   = require 'nearley'
 
 #-----------------------------------------------------------------------------------------------------------
-@lexer                    = ( require './sqlish-lexer' ).lexer
-@grammar                  = require './sqlish-grammar'
+@lexer                    = ( require './sqy-lexer' ).lexer
+@grammar                  = require './sqy-grammar'
 
 #-----------------------------------------------------------------------------------------------------------
 @parse = ( source ) ->

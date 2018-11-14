@@ -17,7 +17,7 @@ debug parser.options
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'XXX/TESTS'
+badge                     = 'SQY/GRAMMAR/TESTS'
 log                       = CND.get_logger 'plain',     badge
 info                      = CND.get_logger 'info',      badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -32,7 +32,7 @@ test                      = require 'guy-test'
 eq                        = CND.equals
 jr                        = JSON.stringify
 #...........................................................................................................
-SQLISH                    = require '../sqlish'
+SQY                       = require '../sqy'
 join                      = ( x, joiner = '' ) -> x.join joiner
 
 #-----------------------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
     try
-      result = SQLISH.parse probe
+      result = SQY.parse probe
     catch error
       # throw error
       if matcher is null

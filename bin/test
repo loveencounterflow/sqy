@@ -11,20 +11,20 @@ lime='\x1b[38;05;118m'
 orange='\x1b[38;05;208m'
 red='\x1b[38;05;124m'
 reset='\x1b[0m'
-function info () { set +u;  printf "$grey""SQLISH ""$blue%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
-function help () { set +u;  printf "$grey""SQLISH ""$lime%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
-function urge () { set +u;  printf "$grey""SQLISH ""$orange%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
-function warn () { set +u;  printf "$grey""SQLISH ""$red%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
+function info () { set +u;  printf "$grey""SQY ""$blue%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
+function help () { set +u;  printf "$grey""SQY ""$lime%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
+function urge () { set +u;  printf "$grey""SQY ""$orange%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
+function warn () { set +u;  printf "$grey""SQY ""$red%s$reset\n" "$1 $2 $3 $4 $5 $6"; set -u; }
 
 # info 'intershop command '"$0" "$@"
 
 # NOTE avoiding `coffee --watch` to kick in, in case it is running
 # NOTE hotfix for https://github.com/kach/nearley/issues/412
 	# | sed --regexp-extended 's/(\(lexer.has\("[^"]+"\) \? \{type: "[^"]+"\} : [^"]+\))/```\1```/g' \
-nearleyc src/sqlish-grammar.ne \
+nearleyc src/sqy-grammar.ne \
 	| sed --regexp-extended 's/\(lexer.has\("[^"]+"\) \? (\{type: "[^"]+"\}) : [^"]+\)/\1/g' \
-	> src/sqlish-grammar.pre
-coffee -o lib -c src/sqlish-grammar.pre
-trash src/sqlish-grammar.pre
-node lib/tests/sqlish-grammar.test.js
+	> src/sqy-grammar.pre
+coffee -o lib -c src/sqy-grammar.pre
+trash src/sqy-grammar.pre
+node lib/tests/sqy-grammar.test.js
 

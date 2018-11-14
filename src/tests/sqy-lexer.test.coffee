@@ -9,7 +9,7 @@
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'XXX/TESTS'
+badge                     = 'SQY/LEXER/TESTS'
 log                       = CND.get_logger 'plain',     badge
 info                      = CND.get_logger 'info',      badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -24,7 +24,7 @@ test                      = require 'guy-test'
 eq                        = CND.equals
 jr                        = JSON.stringify
 #...........................................................................................................
-LXR                       = require '../sqlish-lexer'
+LXR                       = require '../sqy-lexer'
 join                      = ( x, joiner = '' ) -> x.join joiner
 
 #-----------------------------------------------------------------------------------------------------------
