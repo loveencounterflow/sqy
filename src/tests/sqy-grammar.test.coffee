@@ -55,10 +55,13 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set  debug to true; ",{"type":"set_debug","value":true,"loc":"1#1"}]
     ["set  debug to true ;",{"type":"set_debug","value":true,"loc":"1#1"}]
     ["set  debug to true  ;",{"type":"set_debug","value":true,"loc":"1#1"}]
-    # [" set debug to true ;",{"type":"set_debug","value":true,"loc":"1#2"}]
-    # [" set debug to true ; ",{"type":"set_debug","value":true,"loc":"1#2"}]
-    # ["  set   debug   to   true ; ",{"type":"set_debug","value":true,"loc":"1#3"}]
-    # ["  select   fields #myfield;",{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#3"}]
+    [" set debug to true ;",{"type":"set_debug","value":true,"loc":"1#2"}]
+    ["setdebugto",null]
+    ["setdebugtotrue",null]
+    ["setdebugtotrue;",null]
+    [" set debug to true ; ",{"type":"set_debug","value":true,"loc":"1#2"}]
+    ["  set   debug   to   true ; ",{"type":"set_debug","value":true,"loc":"1#3"}]
+    ["  select   fields #myfield;",{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#3"}]
     ["select fields #myfield;",{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"}]
     ["select  fields #myfield;",{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"}]
     ["create layout #mylayout;",{"type":"create_layout","id":"#mylayout","loc":"1#1"}]
@@ -119,6 +122,8 @@ unless module.parent?
     ]
   @_prune()
   @_main()
+
+
 
 
 
