@@ -1,13 +1,13 @@
 {
   "name": "sqy",
   "version": "0.1.0",
-  "description": "",
+  "description": "An experimental grammar in the style of SQL to define tabular layouts",
   "main": "lib/sqy.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "railroad": "nearley-railroad src/sqy-grammar.ne -o artwork/sqy-grammar.html",
+    "railroad": "nearley-railroad src/sqy-grammar.ne -o artwork/railroad-diagrams/README.md",
     "test": "bin/test ; node lib/tests/sqy-lexer.test.js"
   },
   "author": "",
