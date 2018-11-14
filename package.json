@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "railroad": "nearley-railroad src/sqy-grammar.ne -o artwork/railroad-diagrams/README.md",
+    "railroad": "nearley-railroad src/sqy-grammar.ne -o artwork/sqy-grammar.html",
     "test": "bin/test ; node lib/tests/sqy-lexer.test.js"
   },
   "author": "",
