@@ -113,12 +113,39 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "nl" ] = ( T, done ) ->
+  probes_and_matchers = [
+    [" \n set debug to true ;",{"type":"set_debug","value":true,"loc":"2#2"}]
+    [" set debug to true ; \n  select fields #thatone;",[{"type":"set_debug","value":true,"loc":"1#2"},{"type":"select_fields","selectors":[{"type":"id","id":"#thatone"}],"loc":"1#25"}]]
+    ["  set   debug   to   true ; \n  select fields #thatone;",[{"type":"set_debug","value":true,"loc":"1#3"},{"type":"select_fields","selectors":[{"type":"id","id":"#thatone"}],"loc":"1#32"}]]
+    ["  select   fields #myfield;\n  select fields #thatone;",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#3"},{"type":"select_fields","selectors":[{"type":"id","id":"#thatone"}],"loc":"1#31"}]]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
 
 
 ############################################################################################################
 unless module.parent?
   include = [
     "basic"
+    "nl"
     ]
   @_prune()
   @_main()

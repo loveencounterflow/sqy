@@ -59,7 +59,8 @@ syntax =
   comma:            ','
   colon:            ':'
   semicolon:        /// \s* ; \s* ///
-  lws:              /// [ \x20 \t ]+ ///
+  ws:               { match: /// [ \x20 \t \n ]+ ///, lineBreaks: true }
+  # lws:              /// [ \x20 \t ]+ ///
   nl:               { match: /// \n ///, lineBreaks: true }
 
 @lexer = MOO.compile syntax
