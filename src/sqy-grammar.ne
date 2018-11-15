@@ -53,10 +53,24 @@ enumerate = ( iterator ) ->
   idx = 0
   yield [ x, ( idx++ ), ] for x from iterator
 
+# #-----------------------------------------------------------------------------------------------------------
+# show = ( ref, d ) ->
+#   for token, idx in d
+#     log ( CND.grey ref ), ( CND.white idx ), ( CND.yellow jr token )
+#   return null
+
 #-----------------------------------------------------------------------------------------------------------
-show = ( ref, d ) ->
-  for token, idx in d
-    log ( CND.grey ref ), ( CND.white idx ), ( CND.yellow jr token )
+show = ( d, level = 0 ) ->
+  indentation = '  '.repeat level
+  for x in d
+    continue if x is null
+    if CND.isa_list x
+      show x, level + 1
+      continue
+    switch x.type
+      when x.value  then  info indentation, CND.red jr x.type
+      when 'id'     then  info indentation, CND.lime x.id
+      else                info indentation, x.type, rpr x.value
   return null
 
 #-----------------------------------------------------------------------------------------------------------
