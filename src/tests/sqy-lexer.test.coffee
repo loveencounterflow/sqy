@@ -79,11 +79,38 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     result = []
     try
       while ( token = LXR.lexer.next() )?
-        unless token.type is 'lws'
+        unless token.type is 'ws'
           if token.type is token.value
             result.push "#{token.type}"
           else
             result.push "#{token.type}/#{rpr token.value}"
+    catch error
+      T.fail error.message
+      warn '44551', jr probe
+      continue
+    result = join result, ','
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
+#-----------------------------------------------------------------------------------------------------------
+@[ "nl" ] = ( T, done ) ->
+  probes_and_matchers = [
+    [" ","ws/' '"]
+    ["\n","ws/'\\n'"]
+    [" \n ","ws/' \\n '"]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    LXR.lexer.reset probe
+    result = []
+    try
+      while ( token = LXR.lexer.next() )?
+        if token.type is token.value
+          result.push "#{token.type}"
+        else
+          result.push "#{token.type}/#{rpr token.value}"
     catch error
       T.fail error.message
       warn '44551', jr probe
@@ -100,6 +127,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 unless module.parent?
   include = [
     "basic"
+    "nl"
     ]
   @_prune()
   @_main()
