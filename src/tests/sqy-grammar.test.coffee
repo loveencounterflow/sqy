@@ -136,7 +136,6 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
-
 #-----------------------------------------------------------------------------------------------------------
 @[ "alignment" ] = ( T, done ) ->
   probes_and_matchers = [
@@ -167,6 +166,33 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "comments" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["set valign to bottom; # just a comment",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
+    ["# just a comment",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
+    ["  # just a comment   ",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
+    # ["select fields .caption;                       set horizontal alignment to left;"]
+    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    # T.eq result, matcher
+  #.........................................................................................................
+  done()
+
 
 
 ############################################################################################################
@@ -175,6 +201,7 @@ unless module.parent?
     "basic"
     "nl"
     "alignment"
+    "comments"
     ]
   @_prune()
   @_main()
