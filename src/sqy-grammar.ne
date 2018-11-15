@@ -229,9 +229,9 @@ $set_sel_alignment = ( d ) ->
 #-----------------------------------------------------------------------------------------------------------
 source                -> _ phrase source                                                    {% $filter_flatten       %}
 source                -> _ phrase                                                           {% $last                 %}
-source                -> _ comment                                                          {% $filter_flatten       %}
+source                -> _ comments                                                         {% $filter_flatten       %}
 #-----------------------------------------------------------------------------------------------------------
-comment               -> %comment                                                           {% $ignore              %}
+comments              -> %comment:+                                                         {% $ignore              %}
 #-----------------------------------------------------------------------------------------------------------
 phrase                -> create                                                             {% $only_one             %}
 phrase                -> set                                                                {% $only_one             %}

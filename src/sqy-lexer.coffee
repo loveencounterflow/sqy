@@ -64,7 +64,7 @@ syntax =
   upto:             '..'
   comma:            ','
   colon:            ':'
-  comment:          /// \# [\x20\t]+ .*? (?= \n | $ ) ///
+  comment:          /// \# [\x20\t]+ .*? (?: \n | $ ) ///
   semicolon:        /// \s* ; \s* ///
   ws:               { match: /// [ \x20 \t \n ]+ ///, lineBreaks: true }
   # lws:              /// [ \x20 \t ]+ ///

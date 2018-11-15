@@ -169,9 +169,10 @@ join                      = ( x, joiner = '' ) -> x.join joiner
 #-----------------------------------------------------------------------------------------------------------
 @[ "comments" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["set valign to bottom; # just a comment",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
-    ["# just a comment",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
-    ["  # just a comment   ",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
+    ["set valign to bottom; # just a comment",[{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]]
+    ["# just a comment",[]]
+    ["  # just a comment   ",[]]
+    ["  # three\n# comments\n# in a row",[]]
     # ["select fields .caption;                       set horizontal alignment to left;"]
     # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
     ]
@@ -189,7 +190,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
         warn '36633', ( jr [ probe, null, ] )
       continue
     urge '36633', ( jr [ probe, result, ] )
-    # T.eq result, matcher
+    T.eq result, matcher
   #.........................................................................................................
   done()
 
