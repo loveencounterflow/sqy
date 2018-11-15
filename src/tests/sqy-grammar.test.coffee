@@ -91,9 +91,6 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["select fields #myfield;                       set top border to 'thin, blue';",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"},{"type":"set_ctx_border","edges":["top"],"style":"thin, blue","loc":"1#47"}]]
     ["select fields #myfield;                       set top border to 'thin, blue';",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"}],"loc":"1#1"},{"type":"set_ctx_border","edges":["top"],"style":"thin, blue","loc":"1#47"}]]
     ["select fields #myfield, #thatone, A1..B2;     set all borders to 'thin';",[{"type":"select_fields","selectors":[{"type":"id","id":"#myfield"},{"type":"id","id":"#thatone"},{"type":"rangekey","first":{"type":"cellkey","value":"A1"},"second":{"type":"cellkey","value":"B2"}}],"loc":"1#1"},{"type":"set_ctx_border","edges":["all"],"style":"thin","loc":"1#47"}]]
-
-    # ["select fields .caption;                       set horizontal alignment to left;"]
-    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
     ]
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
@@ -140,12 +137,44 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   done()
 
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "alignment" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["set top, bottom border to 'thin, blue';",{"type":"set_ctx_border","edges":["top","bottom"],"style":"thin, blue","loc":"1#1"}]
+    ["set vertical   alignment of #overlap-topright,    #overlap-topleft      to top;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"vertical","align":"top","loc":"1#1"}]
+    ["set valign of #overlap-topright,    #overlap-topleft      to top;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"vertical","align":"top","loc":"1#1"}]
+    ["set horizontal alignment of #overlap-topright,    #overlap-topleft      to top;",null]
+    ["set halign to left;",{"type":"set_ctx_alignment","direction":"horizontal","align":"left","loc":"1#1"}]
+    ["set valign to bottom;",{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]
+    # ["select fields .caption;                       set horizontal alignment to left;"]
+    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
+
 
 ############################################################################################################
 unless module.parent?
   include = [
     "basic"
     "nl"
+    "alignment"
     ]
   @_prune()
   @_main()

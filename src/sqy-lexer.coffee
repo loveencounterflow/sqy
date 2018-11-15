@@ -35,8 +35,14 @@ keywords = MOO.keywords {
   select:     'select'
   at:         'at'
   to:         'to'
-  edge:       words_of 'top left bottom right center all'
-
+  of:         'of'
+  all:        'all'
+  top:        'top'
+  left:       'left'
+  bottom:     'bottom'
+  right:      'right'
+  center:     'center'
+  justified:  'justified'
   # halign:     /horizontal\s+alignment/
   }
 

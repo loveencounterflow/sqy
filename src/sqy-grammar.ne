@@ -188,10 +188,36 @@ $select_fields = ( d ) ->
   type      = 'select_fields'
   return { type, selectors, loc, }
 
+#-----------------------------------------------------------------------------------------------------------
+$set_ctx_alignment = ( d ) ->
+  # debug 'set_ctx_alignment'
+  # show d
+  [ SET, ALIGN, TO, alignment, ] = filtered d
+  loc       = get_loc SET
+  direction = if ALIGN.type is 'halign' then 'horizontal' else 'vertical'
+  type      = 'set_ctx_alignment'
+  align     = alignment.value
+  return { type, direction, align, loc, }
+
+
+#-----------------------------------------------------------------------------------------------------------
+$set_sel_alignment = ( d ) ->
+  # debug 'set_sel_alignment'
+  # show d
+  [ SET, ALIGN, OF, selectors, TO, alignment, ] = filtered d
+  loc       = get_loc SET
+  direction = if ALIGN.type is 'halign' then 'horizontal' else 'vertical'
+  type      = 'set_sel_alignment'
+  align     = alignment.value
+  return { type, selectors, direction, align, loc, }
+
+#-----------------------------------------------------------------------------------------------------------
 $_show = ( ref ) -> ( x ) -> debug '44431', x
 
+#-----------------------------------------------------------------------------------------------------------
 $filter_flatten = ( d ) -> filtered flatten d, 2
 
+#-----------------------------------------------------------------------------------------------------------
 $only_one = ( d ) ->
   throw new Error "µ44909 detected ambiguous grammar #{rpr d}" unless d.length is 1
   return d[ 0 ]
@@ -225,11 +251,17 @@ set                   -> set_debug                                              
 set                   -> assignment                                                         {% $first                %}
 set                   -> set_ctx_border                                                     {% $first                %}
 set                   -> set_sel_border                                                     {% $first                %}
+set                   -> set_ctx_alignment                                                  {% $first                %}
+set                   -> set_sel_alignment                                                  {% $first                %}
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s                            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean s                             {% $set_debug            %}
 set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
 set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to" __ style s {% $set_sel_border       %}
+set_ctx_alignment     -> "set" __ halign __ "to" __                      halignment s       {% $set_ctx_alignment    %}
+set_ctx_alignment     -> "set" __ valign __ "to" __                      valignment s       {% $set_ctx_alignment    %}
+set_sel_alignment     -> "set" __ halign __ "of" __ selectors __ "to" __ halignment s       {% $set_sel_alignment    %}
+set_sel_alignment     -> "set" __ valign __ "of" __ selectors __ "to" __ valignment s       {% $set_sel_alignment    %}
 assignment            -> "set" __ %vname  __ "to" __ value s                                {% $assignment           %}
 value                 -> string                                                             {% $first                %}
 value                 -> number                                                             {% $first                %}
@@ -239,13 +271,26 @@ string                -> %sq_string                                             
 number                -> %integer                                                           {% $first                %}
 number                -> %float                                                             {% $first                %}
 style                 -> string                                                             {% $first                %}
+halign                -> %halign                                                            {% $first                %}
+valign                -> %valign                                                            {% $first                %}
 #...........................................................................................................
 border_s              -> "border"                                                           {% $first                %}
 border_s              -> "borders"                                                          {% $first                %}
 edges                 -> edge_comma:+ edge                                                  {% $flatten              %}
 edges                 -> edge
 edge_comma            -> edge _ %comma _                                                    {% $first                %}
-edge                  -> %edge                                                              {% $first_value 'edge'   %}
+edge                  -> "top"                                                              {% $first_value 'edge'         %}
+edge                  -> "left"                                                             {% $first_value 'edge'         %}
+edge                  -> "bottom"                                                           {% $first_value 'edge'         %}
+edge                  -> "right"                                                            {% $first_value 'edge'         %}
+edge                  -> "all"                                                              {% $first_value 'edge'         %}
+halignment            -> "left"                                                             {% $first_value 'halignment'   %}
+halignment            -> "right"                                                            {% $first_value 'halignment'   %}
+halignment            -> "center"                                                           {% $first_value 'halignment'   %}
+halignment            -> "justified"                                                        {% $first_value 'halignment'   %}
+valignment            -> "top"                                                              {% $first_value 'valignment'   %}
+valignment            -> "bottom"                                                           {% $first_value 'valignment'   %}
+valignment            -> "center"                                                           {% $first_value 'valignment'   %}
 #...........................................................................................................
 select                -> select_fields                                                      {% $first                %}
 select_fields         -> "select" __ "fields" __ selectors s                                {% $select_fields        %}
