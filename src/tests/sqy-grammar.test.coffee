@@ -194,6 +194,32 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "cheats" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["!cheat;",{"type":"cheat"}]
+    ["  set debug to true;\n  !cheat;\n\n  create field #japanese-text         at A1..A4;\n",[{"type":"set_debug","value":true,"loc":"1#3"},{"type":"cheat"},{"type":"create_field","id":"#japanese-text","selector":{"type":"rangekey","first":{"type":"cellkey","value":"A1"},"second":{"type":"cellkey","value":"A4"}},"loc":"1#35"}]]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
+  done()
+
 
 
 ############################################################################################################
@@ -203,6 +229,7 @@ unless module.parent?
     "nl"
     "alignment"
     "comments"
+    "cheats"
     ]
   @_prune()
   @_main()

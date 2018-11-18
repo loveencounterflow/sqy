@@ -72,6 +72,8 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["*-3","cellkey/'*-3'"]
     ["*+31","cellkey/'*+31'"]
     ["-CZ+31","cellkey/'-CZ+31'"]
+    [ "cheat","name/'cheat'"]
+    ["!cheat","cheat/'!cheat'"]
     ["# yadda","comment/'# yadda'"]
     ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"]
     ]

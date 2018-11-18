@@ -236,6 +236,7 @@ comments              -> %comment:+                                             
 phrase                -> create                                                             {% $only_one             %}
 phrase                -> set                                                                {% $only_one             %}
 phrase                -> select                                                             {% $only_one             %}
+phrase                -> cheat                                                              {% $last                 %}
 #...........................................................................................................
 create                -> create_field                                                       {% $first                %}
 create                -> create_layout                                                      {% $first                %}
@@ -264,6 +265,8 @@ set_ctx_alignment     -> "set" __ valign __ "to" __                      valignm
 set_sel_alignment     -> "set" __ halign __ "of" __ selectors __ "to" __ halignment s       {% $set_sel_alignment    %}
 set_sel_alignment     -> "set" __ valign __ "of" __ selectors __ "to" __ valignment s       {% $set_sel_alignment    %}
 assignment            -> "set" __ %vname  __ "to" __ value s                                {% $assignment           %}
+#...........................................................................................................
+cheat                 -> %cheat s                                                           {% -> { type: 'cheat', }                %}
 value                 -> string                                                             {% $first                %}
 value                 -> number                                                             {% $first                %}
 value                 -> %boolean                                                           {% $first                %}
@@ -330,6 +333,7 @@ select fields #myfield:                       set top border to 'thin, blue';
 select fields #myfield, #thatone, .h, A1..B2: set top border to 'thin, blue';
 select fields .caption:                       set horizontal alignment to left;
 
+cheat!; # a temporary allowance
 # in layout #mylayout, create field at A1;
 # in layout #mylayout, create field at A1..B2;
 # in layout #mylayout, create field at A1, at B2, #anotherfield at C3..D5;
