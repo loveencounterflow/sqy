@@ -173,6 +173,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["# just a comment",[]]
     ["  # just a comment   ",[]]
     ["  # three\n# comments\n# in a row",[]]
+    ["  # three\n   # comments\n   # in a row",[]]
     # ["select fields .caption;                       set horizontal alignment to left;"]
     # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
     ]
@@ -249,7 +250,7 @@ unless module.parent?
     "basic"
     "nl"
     "alignment"
-    "comments"
+    # "comments"
     "cheats"
     "units"
     ]
