@@ -95,13 +95,13 @@ $last         = ( x               ) -> x[ x.length - 1 ]
 $clasz = ( d ) ->
   type    = 'clasz'
   id      = d[ 0 ].value
-  { type: 'clasz', id, }
+  { type, id, }
 
 #-----------------------------------------------------------------------------------------------------------
 $id = ( d ) ->
   type    = 'id'
   id      = d[ 0 ].value
-  { type: 'id', id, }
+  { type, id, }
 
 #-----------------------------------------------------------------------------------------------------------
 $cellkey = ( d ) ->
@@ -207,7 +207,6 @@ $set_ctx_alignment = ( d ) ->
   align     = alignment.value
   return { type, direction, align, loc, }
 
-
 #-----------------------------------------------------------------------------------------------------------
 $set_sel_alignment = ( d ) ->
   # debug 'set_sel_alignment'
@@ -238,9 +237,9 @@ $set_unit_lengths = ( d ) ->
 #-----------------------------------------------------------------------------------------------------------
 source                -> _ phrase source                                                    {% $filter_flatten       %}
 source                -> _ phrase                                                           {% $last                 %}
-source                -> _ comments                                                         {% $filter_flatten       %}
+source                -> _ comment                                                         {% $filter_flatten       %}
 #-----------------------------------------------------------------------------------------------------------
-comments              -> %comment:+                                                         {% $ignore              %}
+comment              -> _ %comment                                                       {% $ignore              %}
 #-----------------------------------------------------------------------------------------------------------
 phrase                -> create                                                             {% $only_one             %}
 phrase                -> set                                                                {% $only_one             %}
@@ -346,7 +345,11 @@ select fields #myfield:                       set top border to 'thin, blue';
 select fields #myfield, #thatone, .h, A1..B2: set top border to 'thin, blue';
 select fields .caption:                       set horizontal alignment to left;
 
+set col[umn]  width[s]  of * to 10;
+set row       height[s] of * to 10;
+
 cheat!; # a temporary allowance
+
 # in layout #mylayout, create field at A1;
 # in layout #mylayout, create field at A1..B2;
 # in layout #mylayout, create field at A1, at B2, #anotherfield at C3..D5;
