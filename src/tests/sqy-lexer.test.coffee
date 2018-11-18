@@ -76,6 +76,12 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["!cheat","cheat/'!cheat'"]
     ["# yadda","comment/'# yadda'"]
     ["set unit  to 1mm;","set,unit,to,integer/1,name/'mm',semicolon/';'"]
+    ["set col width to 10;","set,col,width,to,integer/10,semicolon/';'"]
+    ["set col widths to 10;","set,col,widths,to,integer/10,semicolon/';'"]
+    ["set column width to 10;","set,column,width,to,integer/10,semicolon/';'"]
+    ["set column widths to 10;","set,column,widths,to,integer/10,semicolon/';'"]
+    ["set row height to 10;","set,row,height,to,integer/10,semicolon/';'"]
+    ["set row heights to 10;","set,row,heights,to,integer/10,semicolon/';'"]
     ### ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"] ###
     ]
   #.........................................................................................................

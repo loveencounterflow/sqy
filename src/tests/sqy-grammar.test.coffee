@@ -242,6 +242,34 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "lane sizes" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["set col width to 10;",{"type":"set_lane_sizes","lane":"col","direction":"width","value":10}]
+    ["set col widths to 10;",{"type":"set_lane_sizes","lane":"col","direction":"width","value":10}]
+    ["set column width to 10;",{"type":"set_lane_sizes","lane":"col","direction":"width","value":10}]
+    ["set column widths to 10;",{"type":"set_lane_sizes","lane":"col","direction":"width","value":10}]
+    ["set row height to 10;",{"type":"set_lane_sizes","lane":"row","direction":"height","value":10}]
+    ["set row heights to 10;",{"type":"set_lane_sizes","lane":"row","direction":"height","value":10}]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
 
 
 ############################################################################################################
@@ -253,6 +281,7 @@ unless module.parent?
     # "comments"
     "cheats"
     "units"
+    "lane sizes"
     ]
   @_prune()
   @_main()

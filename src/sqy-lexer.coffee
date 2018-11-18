@@ -44,6 +44,13 @@ keywords = MOO.keywords {
   center:     'center'
   justified:  'justified'
   unit:       'unit'
+  column:     'column'
+  col:        'col'
+  row:        'row'
+  width:      'width'
+  widths:     'widths'
+  height:     'height'
+  heights:    'heights'
   }
 
 syntax =

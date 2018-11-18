@@ -227,6 +227,22 @@ $set_unit_lengths = ( d ) ->
   loc       = get_loc SET
   return { type, value, unit, }
 
+#-----------------------------------------------------------------------------------------------------------
+$set_lane_sizes = ( d ) ->
+  # debug 'set_sel_alignment'
+  # debug filtered d
+  # show d
+  [ SET, lane, direction, TO, value, ] = filtered d
+  type      = 'set_lane_sizes'
+  loc       = get_loc SET
+  lane      = lane.value
+  lane      = 'col' if lane is 'column'
+  direction = direction.value
+  direction = 'width'   if direction is 'widths'
+  direction = 'height'  if direction is 'heights'
+  value     = value.value
+  return { type, lane, direction, value, }
+
 
 ###======================================================================================================###
 %}
@@ -259,6 +275,8 @@ create_named_layout   -> "create" __ "layout" __ id  s                          
 set                   -> set_grid                                                           {% $first                %}
 set                   -> set_debug                                                          {% $first                %}
 set                   -> set_unit_lengths                                                   {% $first                %}
+set                   -> set_col_widths                                                     {% $first                %}
+set                   -> set_row_heights                                                    {% $first                %}
 set                   -> assignment                                                         {% $first                %}
 set                   -> set_ctx_border                                                     {% $first                %}
 set                   -> set_sel_border                                                     {% $first                %}
@@ -267,7 +285,9 @@ set                   -> set_sel_alignment                                      
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s                            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean s                             {% $set_debug            %}
-set_unit_lengths              -> "set" __ "unit" __ "to" __ unit s                                  {% $set_unit_lengths             %}
+set_unit_lengths      -> "set" __ "unit" __ "to" __ unit s                                  {% $set_unit_lengths     %}
+set_col_widths        -> "set" __ column __ width_s __ "to" __ number s                     {% $set_lane_sizes       %}
+set_row_heights       -> "set" __ "row" __ height_s __ "to" __ number s                     {% $set_lane_sizes       %}
 set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
 set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to" __ style s {% $set_sel_border       %}
 set_ctx_alignment     -> "set" __ halign __ "to" __                      halignment s       {% $set_ctx_alignment    %}
@@ -297,6 +317,12 @@ edges                 -> edge
 edge_comma            -> edge _ %comma _                                                    {% $first                %}
 edge                  -> "top"                                                              {% $first_value 'edge'         %}
 edge                  -> "left"                                                             {% $first_value 'edge'         %}
+column                -> "col"                                                              {% $first_value 'lane'         %}
+column                -> "column"                                                           {% $first_value 'lane'         %}
+width_s               -> "width"                                                            {% $first_value 'direction'    %}
+width_s               -> "widths"                                                           {% $first_value 'direction'    %}
+height_s              -> "height"                                                           {% $first_value 'direction'    %}
+height_s              -> "heights"                                                          {% $first_value 'direction'    %}
 edge                  -> "bottom"                                                           {% $first_value 'edge'         %}
 edge                  -> "right"                                                            {% $first_value 'edge'         %}
 edge                  -> "all"                                                              {% $first_value 'edge'         %}
