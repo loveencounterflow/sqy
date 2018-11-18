@@ -219,6 +219,15 @@ $set_sel_alignment = ( d ) ->
   align     = alignment.value
   return { type, selectors, direction, align, loc, }
 
+#-----------------------------------------------------------------------------------------------------------
+$set_unit_lengths = ( d ) ->
+  [ SET, UNIT, TO, [ value, unit, ], ] = filtered d
+  type      = 'set_unit_lengths'
+  value     = value.value
+  unit      = unit.value
+  loc       = get_loc SET
+  return { type, value, unit, }
+
 
 ###======================================================================================================###
 %}
@@ -250,6 +259,7 @@ create_named_layout   -> "create" __ "layout" __ id  s                          
 #...........................................................................................................
 set                   -> set_grid                                                           {% $first                %}
 set                   -> set_debug                                                          {% $first                %}
+set                   -> set_unit_lengths                                                   {% $first                %}
 set                   -> assignment                                                         {% $first                %}
 set                   -> set_ctx_border                                                     {% $first                %}
 set                   -> set_sel_border                                                     {% $first                %}
@@ -258,6 +268,7 @@ set                   -> set_sel_alignment                                      
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s                            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean s                             {% $set_debug            %}
+set_unit_lengths              -> "set" __ "unit" __ "to" __ unit s                                  {% $set_unit_lengths             %}
 set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
 set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to" __ style s {% $set_sel_border       %}
 set_ctx_alignment     -> "set" __ halign __ "to" __                      halignment s       {% $set_ctx_alignment    %}
@@ -267,6 +278,8 @@ set_sel_alignment     -> "set" __ valign __ "of" __ selectors __ "to" __ valignm
 assignment            -> "set" __ %vname  __ "to" __ value s                                {% $assignment           %}
 #...........................................................................................................
 cheat                 -> %cheat s                                                           {% -> { type: 'cheat', }                %}
+#...........................................................................................................
+unit                  -> number %name                                                       {% $flatten              %}
 value                 -> string                                                             {% $first                %}
 value                 -> number                                                             {% $first                %}
 value                 -> %boolean                                                           {% $first                %}

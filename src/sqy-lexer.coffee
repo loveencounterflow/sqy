@@ -43,7 +43,7 @@ keywords = MOO.keywords {
   right:      'right'
   center:     'center'
   justified:  'justified'
-  # halign:     /horizontal\s+alignment/
+  unit:       'unit'
   }
 
 syntax =

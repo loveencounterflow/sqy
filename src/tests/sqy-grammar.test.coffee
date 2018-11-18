@@ -218,6 +218,27 @@ join                      = ( x, joiner = '' ) -> x.join joiner
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "units" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["set unit  to 1mm;",{"type":"set_unit_lengths","value":1,"unit":"mm"}]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
   done()
 
 
@@ -230,6 +251,7 @@ unless module.parent?
     "alignment"
     "comments"
     "cheats"
+    "units"
     ]
   @_prune()
   @_main()

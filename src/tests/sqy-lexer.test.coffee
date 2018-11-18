@@ -75,7 +75,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     [ "cheat","name/'cheat'"]
     ["!cheat","cheat/'!cheat'"]
     ["# yadda","comment/'# yadda'"]
-    ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"]
+    ["set unit  to 1mm;","set,unit,to,integer/1,name/'mm',semicolon/';'"]
     ]
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
