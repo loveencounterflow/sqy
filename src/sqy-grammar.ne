@@ -243,6 +243,26 @@ $set_lane_sizes = ( d ) ->
   value     = value.value
   return { type, lane, direction, value, }
 
+#-----------------------------------------------------------------------------------------------------------
+$set_default_gaps = ( d ) ->
+  [ SET, DEFAULT, feature, GAPS, TO, value, ] = filtered d
+  type      = 'set_default_gaps'
+  feature   = feature.value
+  value     = value.value
+  return { type, feature, value, }
+
+#-----------------------------------------------------------------------------------------------------------
+$set_field_gaps = ( d ) ->
+  # debug 'set_field_gaps'
+  # debug filtered d
+  # show d
+  [ SET, edges, feature, GAPS, OF, selectors, TO, value, ] = filtered d
+  type      = 'set_field_gaps'
+  feature   = feature.value
+  value     = value.value
+  edges     = ( edge.value for edge in edges )
+  return { type, edges, feature, selectors, value, }
+
 
 ###======================================================================================================###
 %}
@@ -255,11 +275,11 @@ source                -> _ phrase source                                        
 source                -> _ phrase                                                           {% $last                 %}
 source                -> _ comment                                                         {% $filter_flatten       %}
 #-----------------------------------------------------------------------------------------------------------
-comment              -> _ %comment                                                       {% $ignore              %}
+comment               -> _ %comment                                                         {% $ignore              %}
 #-----------------------------------------------------------------------------------------------------------
 phrase                -> create                                                             {% $only_one             %}
 phrase                -> set                                                                {% $only_one             %}
-phrase                -> select                                                             {% $only_one             %}
+# phrase                -> select                                                             {% $only_one             %}
 phrase                -> cheat                                                              {% $last                 %}
 #...........................................................................................................
 create                -> create_field                                                       {% $first                %}
@@ -278,26 +298,33 @@ set                   -> set_unit_lengths                                       
 set                   -> set_col_widths                                                     {% $first                %}
 set                   -> set_row_heights                                                    {% $first                %}
 set                   -> assignment                                                         {% $first                %}
-set                   -> set_ctx_border                                                     {% $first                %}
+# set                   -> set_ctx_border                                                     {% $first                %}
 set                   -> set_sel_border                                                     {% $first                %}
-set                   -> set_ctx_alignment                                                  {% $first                %}
+# set                   -> set_ctx_alignment                                                  {% $first                %}
 set                   -> set_sel_alignment                                                  {% $first                %}
+set                   -> set_default_gaps                                                   {% $first                %}
+set                   -> set_field_gaps                                                     {% $first                %}
 #...........................................................................................................
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s                            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean s                             {% $set_debug            %}
 set_unit_lengths      -> "set" __ "unit" __ "to" __ unit s                                  {% $set_unit_lengths     %}
 set_col_widths        -> "set" __ column __ width_s __ "to" __ number s                     {% $set_lane_sizes       %}
 set_row_heights       -> "set" __ "row" __ height_s __ "to" __ number s                     {% $set_lane_sizes       %}
-set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
+# set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
 set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to" __ style s {% $set_sel_border       %}
-set_ctx_alignment     -> "set" __ halign __ "to" __                      halignment s       {% $set_ctx_alignment    %}
-set_ctx_alignment     -> "set" __ valign __ "to" __                      valignment s       {% $set_ctx_alignment    %}
+# set_ctx_alignment     -> "set" __ halign __ "to" __                      halignment s       {% $set_ctx_alignment    %}
+# set_ctx_alignment     -> "set" __ valign __ "to" __                      valignment s       {% $set_ctx_alignment    %}
 set_sel_alignment     -> "set" __ halign __ "of" __ selectors __ "to" __ halignment s       {% $set_sel_alignment    %}
 set_sel_alignment     -> "set" __ valign __ "of" __ selectors __ "to" __ valignment s       {% $set_sel_alignment    %}
+set_default_gaps      -> "set" __ "default" __ feature __ gap_s __                      "to" __ number s         {% $set_default_gaps     %}
+set_field_gaps        -> "set" __ edges     __ feature __ gap_s __ "of" __ selectors __ "to" __ number s         {% $set_field_gaps       %}
 assignment            -> "set" __ %vname  __ "to" __ value s                                {% $assignment           %}
 #...........................................................................................................
 cheat                 -> %cheat s                                                           {% -> { type: 'cheat', }                %}
 #...........................................................................................................
+feature               -> "border"                                                           {% $first                %}
+feature               -> "text"                                                             {% $first                %}
+feature               -> "background"                                                       {% $first                %}
 unit                  -> number %name                                                       {% $flatten              %}
 value                 -> string                                                             {% $first                %}
 value                 -> number                                                             {% $first                %}
@@ -312,6 +339,8 @@ valign                -> %valign                                                
 #...........................................................................................................
 border_s              -> "border"                                                           {% $first                %}
 border_s              -> "borders"                                                          {% $first                %}
+gap_s                 -> "gap"                                                              {% $first                %}
+gap_s                 -> "gaps"                                                             {% $first                %}
 edges                 -> edge_comma:+ edge                                                  {% $flatten              %}
 edges                 -> edge
 edge_comma            -> edge _ %comma _                                                    {% $first                %}
@@ -334,8 +363,8 @@ valignment            -> "top"                                                  
 valignment            -> "bottom"                                                           {% $first_value 'valignment'   %}
 valignment            -> "center"                                                           {% $first_value 'valignment'   %}
 #...........................................................................................................
-select                -> select_fields                                                      {% $first                %}
-select_fields         -> "select" __ "fields" __ selectors s                                {% $select_fields        %}
+# select                -> select_fields                                                      {% $first                %}
+# select_fields         -> "select" __ "fields" __ selectors s                                {% $select_fields        %}
 selectors             -> selector_comma:+ selector                                          {% $flatten              %}
 selectors             -> selector                                                           {% $flatten              %}
 selector_comma        -> selector _ %comma _                                                {% $first                %}

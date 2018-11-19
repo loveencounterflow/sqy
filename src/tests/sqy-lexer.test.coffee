@@ -82,6 +82,12 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set column widths to 10;","set,column,widths,to,integer/10,semicolon/';'"]
     ["set row height to 10;","set,row,height,to,integer/10,semicolon/';'"]
     ["set row heights to 10;","set,row,heights,to,integer/10,semicolon/';'"]
+    ["set default border gaps   to 0;","set,default,border,gaps,to,integer/0,semicolon/';'"]
+    ["set default text gaps     to 1;","set,default,text,gaps,to,integer/1,semicolon/';'"]
+    ["set default background gaps     to 1;","set,default,background,gaps,to,integer/1,semicolon/';'"]
+    ["set default border gap   to 0;","set,default,border,gap,to,integer/0,semicolon/';'"]
+    ["set default text gap     to 1;","set,default,text,gap,to,integer/1,semicolon/';'"]
+    ["set default background gap     to 1;","set,default,background,gap,to,integer/1,semicolon/';'"]
     ### ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"] ###
     ]
   #.........................................................................................................

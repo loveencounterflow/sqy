@@ -51,6 +51,11 @@ keywords = MOO.keywords {
   widths:     'widths'
   height:     'height'
   heights:    'heights'
+  text:       'text'
+  background: 'background'
+  gap:        'gap'
+  gaps:       'gaps'
+  default:    'default'
   }
 
 syntax =
