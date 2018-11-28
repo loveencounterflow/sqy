@@ -370,6 +370,41 @@ _pen_token = ( token ) ->
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "sample" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["""
+  create layout #kwic-guide-head;
+  set debug             to true;
+  set grid              to A1;
+  set column widths     to 50;
+  set row heights       to 10;
+  set default text gap  to 2;
+  create field #guide at A1;
+  set all borders of * to 'sThin';
+  set valign of * to center;
+  set halign of * to center;
+  """,{"type":"set_default_gaps","feature":"border","value":0}]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    # show '36633', probe, result
+    urge '36633', ( jr [ probe, result, ] )
+    # T.eq result, matcher
+  #.........................................................................................................
+  done()
+
 
 
 ############################################################################################################
@@ -383,6 +418,7 @@ unless module.parent?
     "units"
     "lane sizes"
     "gaps"
+    "sample"
     ]
   @_prune()
   @_main()
