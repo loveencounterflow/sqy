@@ -1,6 +1,6 @@
 {
   "name": "sqy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An experimental grammar in the style of SQL to define tabular layouts",
   "main": "lib/sqy.js",
   "directories": {
