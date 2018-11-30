@@ -371,6 +371,35 @@ _pen_token = ( token ) ->
   done()
 
 #-----------------------------------------------------------------------------------------------------------
+@[ "units" ] = ( T, done ) ->
+  probes_and_matchers = [
+    ["set unit              to mm;",{"type":"set_unit_lengths","value":1,"unit":"mm"}]
+    ["set unit              to 5.26mm;",{"type":"set_unit_lengths","value":5.26,"unit":"mm"}]
+    ["set unit              to 1\\mktsLineheight;",{"type":"set_unit_lengths","value":1,"unit":"\\mktsLineheight"}]
+    ["set unit              to \\mktsLineheight;",{"type":"set_unit_lengths","value":1,"unit":"\\mktsLineheight"}]
+    # ["set horizontal unit to 50mm;",{"type":"set_default_gaps","feature":"border","value":0}]
+    ]
+  #.........................................................................................................
+  for [ probe, matcher, ] in probes_and_matchers
+    try
+      result = SQY.parse probe
+    catch error
+      # throw error
+      if matcher is null
+        T.ok true
+        help '36633', ( jr [ probe, null, ] )
+      else
+        throw error
+        T.fail error.message
+        warn '36633', ( jr [ probe, null, ] )
+      continue
+    # show '36633', probe, result
+    urge '36633', ( jr [ probe, result, ] )
+    T.eq result, matcher
+  #.........................................................................................................
+  done()
+
+#-----------------------------------------------------------------------------------------------------------
 @[ "sample" ] = ( T, done ) ->
   probes_and_matchers = [
     ["""
@@ -419,6 +448,7 @@ unless module.parent?
     "lane sizes"
     "gaps"
     "sample"
+    "units"
     ]
   @_prune()
   @_main()

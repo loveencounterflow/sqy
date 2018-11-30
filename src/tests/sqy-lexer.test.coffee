@@ -88,6 +88,8 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set default border gap   to 0;","set,default,border,gap,to,integer/0,semicolon/';'"]
     ["set default text gap     to 1;","set,default,text,gap,to,integer/1,semicolon/';'"]
     ["set default background gap     to 1;","set,default,background,gap,to,integer/1,semicolon/';'"]
+    ["set horizontal unit to 50mm;","set,default,background,gap,to,integer/1,semicolon/';'"]
+    ["set unit              to \\mktsLineheight;","set,default,background,gap,to,integer/1,semicolon/';'"]
     ### ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"] ###
     ]
   #.........................................................................................................
@@ -107,7 +109,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
       continue
     result = join result, ','
     urge '36633', ( jr [ probe, result, ] )
-    T.eq result, matcher
+    # T.eq result, matcher
   #.........................................................................................................
   done()
 

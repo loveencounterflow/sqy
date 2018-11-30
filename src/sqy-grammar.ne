@@ -220,9 +220,11 @@ $set_sel_alignment = ( d ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 $set_unit_lengths = ( d ) ->
-  [ SET, UNIT, TO, [ value, unit, ], ] = filtered d
+  [ SET, UNIT, TO, quantity, ] = filtered d
+  if CND.isa_list quantity then [ value, unit, ] = quantity
+  else                          [ value, unit, ] = [ 1, quantity, ]
   type      = 'set_unit_lengths'
-  value     = value.value
+  value     = if CND.isa_number value then value else value.value
   unit      = unit.value
   loc       = get_loc SET
   return { type, value, unit, }
@@ -325,6 +327,7 @@ cheat                 -> %cheat s                                               
 feature               -> "border"                                                           {% $first                %}
 feature               -> "text"                                                             {% $first                %}
 feature               -> "background"                                                       {% $first                %}
+unit                  -> %name                                                              {% $first                %}
 unit                  -> number %name                                                       {% $flatten              %}
 value                 -> string                                                             {% $first                %}
 value                 -> number                                                             {% $first                %}

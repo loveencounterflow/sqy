@@ -67,7 +67,7 @@ syntax =
   clasz:            /// \. [-_a-z]+ ///
   vname:            /// \$ [-_a-z]+ ///
   boolean:          { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
-  name:             { match: /// [a-z]+ ///, type: keywords, }
+  name:             { match: /// (?: \\ [_a-zA-Z] [-_a-zA-Z0-9]* | [_ a-z ] [-_a-z0-9]* ) ///, type: keywords, }
   upto:             /// \.\. ///
   cellkey:          /// \*[-+]?[0-9]+ | [-+]?[A-Z]+\* | [-+]?[A-Z]+[-+]?[0-9]+ | \* ///
   float:            { match: /// [-+]? (?: 0 | [1-9][0-9]* ) \.[0-9]+ ///, value: ( ( s ) -> parseFloat s     ) }
