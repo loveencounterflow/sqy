@@ -56,13 +56,16 @@ keywords = MOO.keywords {
   gap:        'gap'
   gaps:       'gaps'
   default:    'default'
+  horizontal: 'horizontal'
+  vertical:   'vertical'
+  halign:     'halign'
+  valign:     'valign'
+  alignment:  'alignment'
   }
 
 syntax =
   dq_string:        { match: /// " (?: \\[ " \\ ] | [^ \n " \\ ] )* " ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
   sq_string:        { match: /// ' (?: \\[ ' \\ ] | [^ \n ' \\ ] )* ' ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
-  halign:           /// horizontal  \s+ alignment | halign ///
-  valign:           /// vertical    \s+ alignment | valign ///
   id:               /// \# [-_a-z]+ ///
   clasz:            /// \. [-_a-z]+ ///
   vname:            /// \$ [-_a-z]+ ///

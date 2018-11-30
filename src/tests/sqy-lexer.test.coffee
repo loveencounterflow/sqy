@@ -50,7 +50,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["create field #myfield at A1..B2;","create,field,id/'#myfield',at,cellkey/'A1',upto/'..',cellkey/'B2',semicolon/';'"]
     ["select fields #myfield:                       set top border to 'thin, blue';","select,fields,id/'#myfield',colon/':',set,top,border,to,sq_string/'thin, blue',semicolon/';'"]
     ["select fields #myfield, #thatone, .h, A1..B2: set top border to 'thin, blue';","select,fields,id/'#myfield',comma/',',id/'#thatone',comma/',',clasz/'.h',comma/',',cellkey/'A1',upto/'..',cellkey/'B2',colon/':',set,top,border,to,sq_string/'thin, blue',semicolon/';'"]
-    ["select fields .caption:                       set horizontal alignment to left;","select,fields,clasz/'.caption',colon/':',set,halign/'horizontal alignment',to,left,semicolon/';'"]
+    ["select fields .caption:                       set horizontal alignment to left;","select,fields,clasz/'.caption',colon/':',set,horizontal,alignment,to,left,semicolon/';'"]
     ["select fields .caption:                       set valign to top;","select,fields,clasz/'.caption',colon/':',set,valign,to,top,semicolon/';'"]
     ["select fields *1: set valign to top;","select,fields,cellkey/'*1',colon/':',set,valign,to,top,semicolon/';'"]
     ["select fields *: set valign to top;","select,fields,cellkey/'*',colon/':',set,valign,to,top,semicolon/';'"]
@@ -88,8 +88,8 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set default border gap   to 0;","set,default,border,gap,to,integer/0,semicolon/';'"]
     ["set default text gap     to 1;","set,default,text,gap,to,integer/1,semicolon/';'"]
     ["set default background gap     to 1;","set,default,background,gap,to,integer/1,semicolon/';'"]
-    ["set horizontal unit to 50mm;","set,default,background,gap,to,integer/1,semicolon/';'"]
-    ["set unit              to \\mktsLineheight;","set,default,background,gap,to,integer/1,semicolon/';'"]
+    ["set horizontal unit to 50mm;","set,horizontal,unit,to,integer/50,name/'mm',semicolon/';'"]
+    ["set unit              to \\mktsLineheight;","set,unit,to,name/'\\\\mktsLineheight',semicolon/';'"]
     ### ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"] ###
     ]
   #.........................................................................................................
@@ -109,7 +109,7 @@ join                      = ( x, joiner = '' ) -> x.join joiner
       continue
     result = join result, ','
     urge '36633', ( jr [ probe, result, ] )
-    # T.eq result, matcher
+    T.eq result, matcher
   #.........................................................................................................
   done()
 

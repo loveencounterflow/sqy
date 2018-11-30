@@ -157,10 +157,9 @@ _pen_token = ( token ) ->
 @[ "alignment" ] = ( T, done ) ->
   probes_and_matchers = [
     ["set vertical   alignment of #overlap-topright,    #overlap-topleft      to top;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"vertical","align":"top","loc":"1#1"}]
-    ["set valign of #overlap-topright,    #overlap-topleft      to top;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"vertical","align":"top","loc":"1#1"}]
     ["set horizontal alignment of #overlap-topright,    #overlap-topleft      to top;",null]
-    # ["select fields .caption;                       set horizontal alignment to left;"]
-    # ["select cells D3..E6; create field #myfield; set border to 'thin'; set halign to center;"]
+    ["set horizontal alignment of #overlap-topright,    #overlap-topleft      to left;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"horizontal","align":"left","loc":"1#1"}]
+    ["set valign of #overlap-topright,    #overlap-topleft      to top;",{"type":"set_sel_alignment","selectors":[{"type":"id","id":"#overlap-topright"},{"type":"id","id":"#overlap-topleft"}],"direction":"vertical","align":"top","loc":"1#1"}]
     ]
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
@@ -373,11 +372,13 @@ _pen_token = ( token ) ->
 #-----------------------------------------------------------------------------------------------------------
 @[ "units" ] = ( T, done ) ->
   probes_and_matchers = [
-    ["set unit              to mm;",{"type":"set_unit_lengths","value":1,"unit":"mm"}]
-    ["set unit              to 5.26mm;",{"type":"set_unit_lengths","value":5.26,"unit":"mm"}]
-    ["set unit              to 1\\mktsLineheight;",{"type":"set_unit_lengths","value":1,"unit":"\\mktsLineheight"}]
-    ["set unit              to \\mktsLineheight;",{"type":"set_unit_lengths","value":1,"unit":"\\mktsLineheight"}]
-    # ["set horizontal unit to 50mm;",{"type":"set_default_gaps","feature":"border","value":0}]
+    ["set unit              to mm;",{"type":"set_unit_lengths","direction":"both","value":1,"unit":"mm"}]
+    ["set unit              to 5.26mm;",{"type":"set_unit_lengths","direction":"both","value":5.26,"unit":"mm"}]
+    ["set unit              to 1\\mktsLineheight;",{"type":"set_unit_lengths","direction":"both","value":1,"unit":"\\mktsLineheight"}]
+    ["set unit              to \\mktsLineheight;",{"type":"set_unit_lengths","direction":"both","value":1,"unit":"\\mktsLineheight"}]
+    ["set horizontal unit to 50mm;",{"type":"set_unit_lengths","direction":"horizontal","value":50,"unit":"mm"}]
+    ["set horizontal unit to \\linewidth;",{"type":"set_unit_lengths","direction":"horizontal","value":1,"unit":"\\linewidth"}]
+    ["set vertical   unit to 5\\mktsLineheight;",{"type":"set_unit_lengths","direction":"vertical","value":5,"unit":"\\mktsLineheight"}]
     ]
   #.........................................................................................................
   for [ probe, matcher, ] in probes_and_matchers
@@ -439,9 +440,9 @@ _pen_token = ( token ) ->
 ############################################################################################################
 unless module.parent?
   include = [
+    "alignment"
     "basic"
     "nl"
-    "alignment"
     # "comments"
     "cheats"
     "units"

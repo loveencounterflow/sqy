@@ -211,23 +211,34 @@ $set_ctx_alignment = ( d ) ->
 $set_sel_alignment = ( d ) ->
   # debug 'set_sel_alignment'
   # show d
+  # debug filtered d
   [ SET, ALIGN, OF, selectors, TO, alignment, ] = filtered d
   loc       = get_loc SET
-  direction = if ALIGN.type is 'halign' then 'horizontal' else 'vertical'
+  if CND.isa_list ALIGN then  direction = ALIGN[ 0 ].type
+  else                        direction = if ALIGN.type is 'halign' then 'horizontal' else 'vertical'
   type      = 'set_sel_alignment'
   align     = alignment.value
   return { type, selectors, direction, align, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
 $set_unit_lengths = ( d ) ->
-  [ SET, UNIT, TO, quantity, ] = filtered d
+  # debug 'set_sel_alignment'
+  # show d
+  switch ( d = filtered d ).length
+    when 4
+      [ SET,            UNIT, TO, quantity, ] = filtered d
+      direction = 'both'
+    when 5
+      [ SET, direction, UNIT, TO, quantity, ] = filtered d
+      direction = direction.value
+  #.........................................................................................................
   if CND.isa_list quantity then [ value, unit, ] = quantity
   else                          [ value, unit, ] = [ 1, quantity, ]
   type      = 'set_unit_lengths'
   value     = if CND.isa_number value then value else value.value
   unit      = unit.value
   loc       = get_loc SET
-  return { type, value, unit, }
+  return { type, direction, value, unit, }
 
 #-----------------------------------------------------------------------------------------------------------
 $set_lane_sizes = ( d ) ->
@@ -310,6 +321,8 @@ set                   -> set_field_gaps                                         
 set_grid              -> "set" __ "grid"  __ "to" __ gridsize  s                            {% $set_grid             %}
 set_debug             -> "set" __ "debug" __ "to" __ %boolean s                             {% $set_debug            %}
 set_unit_lengths      -> "set" __ "unit" __ "to" __ unit s                                  {% $set_unit_lengths     %}
+set_unit_lengths      -> "set" __ "horizontal" __ "unit" __ "to" __ unit s                  {% $set_unit_lengths     %}
+set_unit_lengths      -> "set" __ "vertical"   __ "unit" __ "to" __ unit s                  {% $set_unit_lengths     %}
 set_col_widths        -> "set" __ column __ width_s __ "to" __ number s                     {% $set_lane_sizes       %}
 set_row_heights       -> "set" __ "row" __ height_s __ "to" __ number s                     {% $set_lane_sizes       %}
 # set_ctx_border        -> "set" __ edges __ border_s __ "to" __ style s                      {% $set_ctx_border       %}
@@ -337,8 +350,10 @@ string                -> %sq_string                                             
 number                -> %integer                                                           {% $first                %}
 number                -> %float                                                             {% $first                %}
 style                 -> string                                                             {% $first                %}
-halign                -> %halign                                                            {% $first                %}
-valign                -> %valign                                                            {% $first                %}
+halign                -> "halign"                                                           {% $first                %}
+halign                -> "horizontal" __ "alignment"                                        {% $flatten              %}
+valign                -> "valign"                                                           {% $first                %}
+valign                -> "vertical" __ "alignment"                                          {% $flatten              %}
 #...........................................................................................................
 border_s              -> "border"                                                           {% $first                %}
 border_s              -> "borders"                                                          {% $first                %}
