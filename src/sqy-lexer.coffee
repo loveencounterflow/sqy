@@ -66,9 +66,9 @@ keywords = MOO.keywords {
 syntax =
   dq_string:        { match: /// " (?: \\[ " \\ ] | [^ \n " \\ ] )* " ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
   sq_string:        { match: /// ' (?: \\[ ' \\ ] | [^ \n ' \\ ] )* ' ///, value: ( ( s ) -> s[ 1 ... s.length - 1 ] ) }
-  id:               /// \# [-_a-z]+ ///
-  clasz:            /// \. [-_a-z]+ ///
-  vname:            /// \$ [-_a-z]+ ///
+  id:               /// \# [-_a-z0-9]+ ///
+  clasz:            /// \. [-_a-z0-9]+ ///
+  vname:            /// \$ [-_a-z0-9]+ ///
   boolean:          { match: ( words_of 'true false' ), value: ( ( s ) -> if s is 'true' then true else false ), }
   name:             { match: /// (?: \\ [_a-zA-Z] [-_a-zA-Z0-9]* | [_ a-z ] [-_a-z0-9]* ) ///, type: keywords, }
   upto:             /// \.\. ///
