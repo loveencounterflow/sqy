@@ -35,16 +35,6 @@ jr                        = JSON.stringify
 SQY                       = require '../sqy'
 join                      = ( x, joiner = '' ) -> x.join joiner
 
-#-----------------------------------------------------------------------------------------------------------
-@_prune = ->
-  for name, value of @
-    continue if name.startsWith '_'
-    delete @[ name ] unless name in include
-  return null
-
-#-----------------------------------------------------------------------------------------------------------
-@_main = ->
-  test @, 'timeout': 30000
 
 #-----------------------------------------------------------------------------------------------------------
 show = ( ref, probe, ast ) ->
@@ -182,6 +172,7 @@ _pen_token = ( token ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 @[ "comments" ] = ( T, done ) ->
+  debug 'µ44453'
   probes_and_matchers = [
     ["set valign to bottom; # just a comment",[{"type":"set_ctx_alignment","direction":"vertical","align":"bottom","loc":"1#1"}]]
     ["# just a comment",[]]
@@ -236,7 +227,7 @@ _pen_token = ( token ) ->
   done()
 
 #-----------------------------------------------------------------------------------------------------------
-@[ "units" ] = ( T, done ) ->
+@[ "units 1" ] = ( T, done ) ->
   probes_and_matchers = [
     ["set unit  to 1mm;",{"type":"set_unit_lengths","value":1,"unit":"mm"}]
     ]
@@ -370,7 +361,7 @@ _pen_token = ( token ) ->
   done()
 
 #-----------------------------------------------------------------------------------------------------------
-@[ "units" ] = ( T, done ) ->
+@[ "units 2" ] = ( T, done ) ->
   probes_and_matchers = [
     ["set unit              to mm;",{"type":"set_unit_lengths","direction":"both","value":1,"unit":"mm"}]
     ["set unit              to 5.26mm;",{"type":"set_unit_lengths","direction":"both","value":5.26,"unit":"mm"}]
@@ -435,26 +426,39 @@ _pen_token = ( token ) ->
   #.........................................................................................................
   done()
 
+#-----------------------------------------------------------------------------------------------------------
+@[ "experiments" ] = ( T, done ) ->
+  probes = [
+    "set default border gaps to 1;"
+    "create field #line-i at B1..D1;"
+    "create field #line-1 at B1..D1;"
+    "set horizontal alignment of +A* to right;"
+    "set horizontal alignment of -A* to right;"
+    "set all borders of D3 to 'sThin';"
+    # "set background of D3 to 'sHatched';"
+    ]
+  #.........................................................................................................
+  for probe in probes
+    try
+      result = SQY.parse probe
+    catch error
+      warn error.message
+      continue
+    # urge '36633', ( jr result )
+    urge '36633', ( rpr result )
+  #.........................................................................................................
+  done()
+
 
 
 ############################################################################################################
 unless module.parent?
-  include = [
-    "alignment"
-    "basic"
-    "nl"
-    # "comments"
-    "cheats"
-    "units"
-    "lane sizes"
-    "gaps"
-    "sample"
-    "units"
-    ]
-  @_prune()
-  @_main()
 
-
+  # test @, 'timeout': 30000
+  test @[ "experiments" ]
+  # test @[ "comments" ]
+  # test @[ "units 1" ]
+  # test @[ "units 2" ]
 
 
 

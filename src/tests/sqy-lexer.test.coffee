@@ -90,6 +90,10 @@ join                      = ( x, joiner = '' ) -> x.join joiner
     ["set default background gap     to 1;","set,default,background,gap,to,integer/1,semicolon/';'"]
     ["set horizontal unit to 50mm;","set,horizontal,unit,to,integer/50,name/'mm',semicolon/';'"]
     ["set unit              to \\mktsLineheight;","set,unit,to,name/'\\\\mktsLineheight',semicolon/';'"]
+    ["#foo","id/'#foo'"]
+    ["#foo-bar","id/'#foo-bar'"]
+    ["#foo42","id/'#foo42'"]
+    ["#foo-42","id/'#foo-42'"]
     ### ["# yadda \nset $v to 123;","comment/'# yadda ',set,vname/'$v',to,integer/123,semicolon/';'"] ###
     ]
   #.........................................................................................................
