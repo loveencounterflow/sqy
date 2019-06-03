@@ -221,6 +221,17 @@ $set_sel_alignment = ( d ) ->
   return { type, selectors, direction, align, loc, }
 
 #-----------------------------------------------------------------------------------------------------------
+$set_sel_background = ( d ) ->
+  # debug 'set_sel_background'
+  # show d
+  # debug filtered d
+  [ SET, BACKGROUND, OF, selectors, TO, style, ] = filtered d
+  loc       = get_loc SET
+  type      = 'set_sel_background'
+  style     = style.value
+  return { type, selectors, style, loc, }
+
+#-----------------------------------------------------------------------------------------------------------
 $set_unit_lengths = ( d ) ->
   # debug 'set_sel_alignment'
   # show d
@@ -331,6 +342,7 @@ set_sel_border        -> "set" __ edges __ border_s __ "of" __ selectors __ "to"
 # set_ctx_alignment     -> "set" __ valign __ "to" __                      valignment s       {% $set_ctx_alignment    %}
 set_sel_alignment     -> "set" __ halign __ "of" __ selectors __ "to" __ halignment s       {% $set_sel_alignment    %}
 set_sel_alignment     -> "set" __ valign __ "of" __ selectors __ "to" __ valignment s       {% $set_sel_alignment    %}
+set_sel_alignment     -> "set" __ %background __ "of" __ selectors __ "to" __ style s       {% $set_sel_background    %}
 set_default_gaps      -> "set" __ "default" __ feature __ gap_s __                      "to" __ number s         {% $set_default_gaps     %}
 set_field_gaps        -> "set" __ edges     __ feature __ gap_s __ "of" __ selectors __ "to" __ number s         {% $set_field_gaps       %}
 assignment            -> "set" __ %vname  __ "to" __ value s                                {% $assignment           %}

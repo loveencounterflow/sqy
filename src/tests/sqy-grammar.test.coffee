@@ -435,7 +435,7 @@ _pen_token = ( token ) ->
     "set horizontal alignment of +A* to right;"
     "set horizontal alignment of -A* to right;"
     "set all borders of D3 to 'sThin';"
-    # "set background of D3 to 'sHatched';"
+    "set background of D3 to 'sHatched';"
     ]
   #.........................................................................................................
   for probe in probes
